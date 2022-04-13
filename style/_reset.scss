@@ -1,0 +1,18 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+html {
+    /* 1rem = 10px */
+    font-size: 62.5%;
+}
+body {
+    font-size: 1.6rem;
+    background-color: black;
+    color: white;
+}

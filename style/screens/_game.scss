@@ -1,0 +1,96 @@
+.Game {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+
+    .telemetry {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 1em;
+        display: flex;
+        flex-direction: column;
+        font-size: 2.4rem;
+        font-weight: 300;
+        gap: 0.2em;
+        user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+
+        .phase {
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 0.3em;
+        }
+
+        .landing-telemetry.hidden {
+            display: none;
+        }
+
+        .throttle-guage,
+        .fuel-guage {
+            width: 20ch;
+            height: 0.8em;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            margin-top: 0.5rem;
+
+            .throttle-bar,
+            .fuel-bar {
+                height: 90%;
+                background: white;
+                border: none;
+                border-radius: 2rem;
+            }
+        }
+    }
+
+    .sc-info {
+        text-align: right;
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 1em;
+        display: flex;
+        flex-direction: column;
+        font-size: 2rem;
+        font-weight: 300;
+        gap: 0.15em;
+        user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+
+        .description {
+            font-weight: bold;
+        }
+    }
+
+    #speed {
+        appearance: none;
+        -webkit-appearance: none;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 2rem;
+        width: 50ch;
+    }
+
+    .guidence {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 1.2em;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        font-size: 2.8rem;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+    }
+}

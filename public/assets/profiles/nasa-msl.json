@@ -1,0 +1,95 @@
+{
+    "name": "NASA MSL",
+    "description": "NASA Mars Science Laboratory",
+    "image": "https://mars.nasa.gov/layout/mars2020/images/LearnAboutTheRover_Perseverance_QuickFacts_mobile.png",
+    "mass": 900,
+    "crossSectionArea": 15.9,
+    "sequence": {
+      "preEntry": {
+        "key": "pre-entry",
+        "name": "Awaiting Entry",
+        "description": {
+          "full": "The spacecraft is awaiting entry into the Martian atmosphere.",
+          "guided": "The spacecraft is awaiting entry into the Martian atmosphere."
+        }
+      },
+      "entry": {
+        "key": "entry",
+        "name": "Entry",
+        "description": {
+          "full": "The spacecraft has hit the upper atmosphere. As the air infront of the craft is compressed, kinetic energy is transferred into thermal, slowing down the spacecraft and causing it to heat up.",
+          "guided": "The spacecraft has hit the upper atmosphere. As the air infront of the craft is compressed, kinetic energy is transferred into thermal, slowing down the spacecraft and causing it to heat up."
+        },
+        "trigger": {
+          "full": {
+            "type": "altitude",
+            "value": 150000
+          }
+        }
+      },
+      "descentPreParachute": {
+        "key": "descent-pre-parachute",
+        "name": "Descent (free fall)",
+        "description": {
+          "full": "The spacecraft now needs to further slow down, the parachute will deploy shortly to further decelerate the vehicle.",
+          "guided": "The spacecraft now needs to further slow down, press SPACE to deploy the parachute."
+        },
+        "trigger": {
+          "full": {
+            "type": "velocity",
+            "value": 330
+          }
+        }
+      },
+      "descentParachute": {
+        "key": "descent-post-parachute",
+        "name": "Descent under parachute",
+        "description": {
+          "full": "This spacecraft is too heavy to land gently under parachutes, a propulsive landing is required.",
+          "guided": "This spacecraft is too heavy to land gently under parachutes, press X to cut parachutes and begin propsulvie landing."
+        },
+        "trigger": {
+          "full": {
+            "type": "altitude",
+            "value": 1300
+          },
+          "guided": {
+            "type": "key",
+            "value": " "
+          }
+        }
+      },
+      "landing": {
+        "key": "landing",
+        "name": "Landing",
+        "description": {
+          "full": "The spacecraft is brought to the surface gently using a controlled propulsive landing.",
+          "guided": "Press SHIFT to increase throttle and CONTROL to decrease throttle. Press E to equalise thrust-to-weight. Hold C to see alternate camera view."
+        },
+        "trigger": {
+          "full": {
+            "type": "altitude",
+            "value": 1200
+          },
+          "guided": {
+            "type": "key",
+            "value": "x"
+          }
+        }
+      },
+      "touchdown": {
+        "key": "touchdown",
+        "name": "Touchdown",
+        "description": {
+          "full": "The spacecraft has landed on the surface of Mars.",
+          "guided": "The spacecraft has landed on the surface of Mars."
+        },
+        "trigger": {
+          "full": {
+            "type": "altitude",
+            "value": 0
+          }
+        }
+      }
+    }
+  }

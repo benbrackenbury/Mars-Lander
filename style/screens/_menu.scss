@@ -1,0 +1,98 @@
+.Menu {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    .interface {
+        display: flex;
+        flex-direction: column;
+        padding: 5em;
+        gap: 3em;
+
+        .title {
+            font-size: 5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+
+        .form {
+            flex-grow: 1;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        form {
+            margin-top: 5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.7em;
+            min-width: max-content;
+            max-width: 50%;
+
+            select {
+                font-size: 2.4rem;
+            }
+
+            .input {
+                display: flex;
+                flex-direction: column;
+            }
+
+            label {
+                font-size: 1.8rem;
+                font-weight: 100;
+                opacity: 0.8;
+
+                &:last-of-type {
+                    margin-top: 4rem;
+                }
+            }
+        }
+
+        .start-btn {
+            font-size: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding: 0.3em 1em;
+            width: min-content;
+            border: none;
+            border-radius: 1rem;
+            outline: none;
+            background-color: rgba(236, 236, 236, 0.88);
+            color: #3E3E3E;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.88);
+            }
+        }
+
+        #new-profile-dialog {
+            width: 80vw;
+            margin: auto;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            min-height: 50vh;
+        }
+        #new-profile-dialog::backdrop {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+    }
+
+    .graphic {
+        padding: 5em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+            width: 100%;
+        }
+    }
+}
