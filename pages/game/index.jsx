@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState, useLayoutEffect } from 'react'
 import { useRouter } from 'next/router'
 import * as THREE from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import AppContext from '../../context'
 
@@ -15,29 +17,58 @@ const Game = () => {
 
     const setup = () => {
         const scene = new THREE.Scene()
-        const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000000000)
 
-        const renderer = new THREE.WebGLRenderer();
+        const MARS_RADIUS = 3389500
+
+        const renderer = new THREE.WebGLRenderer()
         renderer.setSize( window.innerWidth, window.innerHeight )
         document.querySelector('.Game').appendChild( renderer.domElement )
 
-        const geometry = new THREE.BoxGeometry()
-        const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } )
-        const cube = new THREE.Mesh( geometry, material )
-        scene.add( cube )
+        const marsGeometry = new THREE.SphereGeometry( MARS_RADIUS, 100, 100 )
+        const marsMaterial = new THREE.MeshBasicMaterial({
+            map: new THREE.TextureLoader().load('/assets/img/mars.jpg'),
+        })
+        const mars = new THREE.Mesh( marsGeometry, marsMaterial )
+        scene.add( mars )
 
-        camera.position.z = 5
+        const spacecraftGeometry = new THREE.BoxGeometry( 5, 5, 5 )
+        const spacescraftMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+        })
 
+        const spacecraft = new THREE.Mesh( spacecraftGeometry, spacescraftMaterial )
+        scene.add( spacecraft )
+        spacecraft.position.set(0, 0, MARS_RADIUS + 250000)
+        
+        //orbit controls
+        // const controls = new OrbitControls( camera, renderer.domElement )
+        // controls.target.set(spacecraft.position.x, spacecraft.position.y, spacecraft.position.z)
+        // controls.update()
+
+        const clock = new THREE.Clock()        
+        
         function animate() {
+            let deltaTime = clock.getDelta()
+
+            spacecraft.position.z -= 100 * 9.8 * deltaTime
+            spacecraft.position.x += 10000 * deltaTime
+
+            camera.position.set(spacecraft.position.x - 20, spacecraft.position.y, spacecraft.position.z + 5)
+
+            camera.lookAt(spacecraft.position)
+            
             requestAnimationFrame( animate )
-
-            cube.rotation.x += 0.01
-            cube.rotation.y += 0.01
-
             renderer.render( scene, camera )
-        };
+        }
 
         animate()
+
+        window.addEventListener( 'resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight
+            camera.updateProjectionMatrix()
+            renderer.setSize( window.innerWidth, window.innerHeight )
+        })
     }
 
     const [sequence, setSequence] = useState([])
