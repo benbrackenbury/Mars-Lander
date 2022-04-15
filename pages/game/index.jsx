@@ -22,27 +22,27 @@ const Game = () => {
         const MARS_RADIUS = 3389500
 
         const renderer = new THREE.WebGLRenderer()
-        renderer.setSize( window.innerWidth, window.innerHeight )
-        document.querySelector('.Game').appendChild( renderer.domElement )
+        renderer.setSize(window.innerWidth, window.innerHeight)
+        document.querySelector('.Game').appendChild(renderer.domElement)
 
-        const marsGeometry = new THREE.SphereGeometry( MARS_RADIUS, 100, 100 )
+        const marsGeometry = new THREE.SphereGeometry(MARS_RADIUS, 100, 100)
         const marsMaterial = new THREE.MeshBasicMaterial({
             map: new THREE.TextureLoader().load('/assets/img/mars.jpg'),
         })
-        const mars = new THREE.Mesh( marsGeometry, marsMaterial )
-        scene.add( mars )
+        const mars = new THREE.Mesh(marsGeometry, marsMaterial)
+        scene.add(mars)
 
-        const spacecraftGeometry = new THREE.BoxGeometry( 5, 5, 5 )
+        const spacecraftGeometry = new THREE.BoxGeometry(5, 5, 5)
         const spacescraftMaterial = new THREE.MeshBasicMaterial({
             color: 0xffffff,
         })
 
-        const spacecraft = new THREE.Mesh( spacecraftGeometry, spacescraftMaterial )
-        scene.add( spacecraft )
+        const spacecraft = new THREE.Mesh(spacecraftGeometry, spacescraftMaterial)
+        scene.add(spacecraft)
         spacecraft.position.set(0, 0, MARS_RADIUS + 250000)
         
         //orbit controls
-        // const controls = new OrbitControls( camera, renderer.domElement )
+        // const controls = new OrbitControls(camera, renderer.domElement)
         // controls.target.set(spacecraft.position.x, spacecraft.position.y, spacecraft.position.z)
         // controls.update()
 
@@ -58,16 +58,16 @@ const Game = () => {
 
             camera.lookAt(spacecraft.position)
             
-            requestAnimationFrame( animate )
-            renderer.render( scene, camera )
+            requestAnimationFrame(animate)
+            renderer.render(scene, camera)
         }
 
         animate()
 
-        window.addEventListener( 'resize', () => {
+        window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight
             camera.updateProjectionMatrix()
-            renderer.setSize( window.innerWidth, window.innerHeight )
+            renderer.setSize(window.innerWidth, window.innerHeight)
         })
     }
 
@@ -94,7 +94,7 @@ const Game = () => {
 
             {/* Canvas will be rendered here */}
         </div>
-    )
+   )
 }
 
 export default Game

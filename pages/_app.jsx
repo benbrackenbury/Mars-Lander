@@ -19,5 +19,5 @@ export default ({ Component, pageProps }) => {
     <AppContext.Provider value={{ ...allProps }}>
       <Component {...pageProps} />
     </AppContext.Provider>
-  )
+ )
 }

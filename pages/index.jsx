@@ -68,7 +68,7 @@ const MenuScreen = () => {
       </div>
 
     </div>
-  )
+ )
 }
 
 export default MenuScreen
