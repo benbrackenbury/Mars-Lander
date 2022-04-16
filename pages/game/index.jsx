@@ -2,6 +2,7 @@ import { useContext, useEffect, useState, useLayoutEffect } from 'react'
 import { useRouter } from 'next/router'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import AppContext from '../../context'
 import mars, { MARS_RADIUS, GRAVITY } from '../../three/objects/mars'
@@ -27,7 +28,7 @@ const Game = () => {
 
     let currentPhaseIndex = 0 
 
-    const setup = () => {
+    const setup = async () => {
         const scene = new THREE.Scene()
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000000000)
 
@@ -37,33 +38,26 @@ const Game = () => {
         document.querySelector('.Game').appendChild(renderer.domElement)
 
         scene.add(mars)
-        // scene.add(spacecraft)
-
-        let spacecraft
-        let loader = new THREE.ObjectLoader()
-        fetch('/assets/models/msl-aeroshell.json')
-            .then(obj => obj.json())
-            .then(obj => {
-                spacecraft = loader.parse(obj).children[0]
-                scene.add(spacecraft)
-                spacecraft.material = new THREE.MeshBasicMaterial({
-                    color: 0x555555
-                })
-                spacecraft.rotation.z = toRadians(angleOfAttack)
-                spacecraft.rotation.x = toRadians(angleOfAttack)
-                spacecraft.scale.set(2, 2, 2)
-            })
-
-        const overheadLight = new THREE.PointLight(0xffffff, 1, 10)
-        scene.add(overheadLight)
-
         mars.position.set(0, 0, 0-(MARS_RADIUS + 250000))
         camera.position.set(0, 0, 20)
+        // scene.add(spacecraft)
+
+        let loader = new GLTFLoader()
+        let spacecraft = await (await loader.loadAsync('/assets/models/msl-aeroshell.gltf')).scene.children[0]
+        scene.add(spacecraft)
+        spacecraft.material = new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            roughness: 0.5,
+        })
+
+        let light = new THREE.DirectionalLight(0xffffff)
+        light.position.set(1, 1, 10).normalize()
+        scene.add(light)
         
         //orbit controls
         const controls = new OrbitControls(camera, renderer.domElement)
-        // controls.target.set(spacecraft.position.x, spacecraft.position.y, spacecraft.position.z)
-        // controls.update()
+        controls.target.set(spacecraft.position.x, spacecraft.position.y, spacecraft.position.z)
+        controls.update()
 
         const clock = new THREE.Clock()
 
@@ -71,7 +65,9 @@ const Game = () => {
         let acc = GRAVITY
         let angleOfAttack = 68
 
-        // spacecraft.rotation.y = toRadians(-angleOfAttack)
+        spacecraft.scale.set(2, 2, 2)
+        spacecraft.rotation.z = toRadians(angleOfAttack)
+        spacecraft.rotation.x = toRadians(angleOfAttack)
         
         const animate = () => {
             let deltaTime = clock.getDelta()
@@ -81,6 +77,9 @@ const Game = () => {
             mars.rotation.y -= 0.000001 * Math.cos(toRadians(angleOfAttack)) * vel * deltaTime
 
             let alt = 0 - (mars.position.z + MARS_RADIUS)
+
+            //rotate spacecraft
+            spacecraft.rotation.x += 0.1 * deltaTime
 
             //drag
 
@@ -102,7 +101,7 @@ const Game = () => {
             setTimeElapsed(clock.elapsedTime)
             
             //animation loop
-            requestAnimationFrame(alt>0 ? animate : null)
+            requestAnimationFrame(alt>0 ? animate : animate)
             renderer.render(scene, camera)
         }
 
