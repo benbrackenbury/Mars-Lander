@@ -6,6 +6,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import AppContext from '../../context'
 import mars, { MARS_RADIUS } from '../../three/objects/mars'
+import spacecraft from '../../three/objects/spacecraft'
 
 const Game = () => {
     const router = useRouter()
@@ -20,44 +21,27 @@ const Game = () => {
         const scene = new THREE.Scene()
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000000000)
 
-        // const MARS_RADIUS = 3389500
-
         const renderer = new THREE.WebGLRenderer()
         renderer.setSize(window.innerWidth, window.innerHeight)
         document.querySelector('.Game').appendChild(renderer.domElement)
 
-        // const marsGeometry = new THREE.SphereGeometry(MARS_RADIUS, 100, 100)
-        // const marsMaterial = new THREE.MeshBasicMaterial({
-        //     map: new THREE.TextureLoader().load('/assets/img/mars.jpg'),
-        // })
-        // const mars = new THREE.Mesh(marsGeometry, marsMaterial)
         scene.add(mars)
-
-        const spacecraftGeometry = new THREE.BoxGeometry(5, 5, 5)
-        const spacescraftMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-        })
-
-        const spacecraft = new THREE.Mesh(spacecraftGeometry, spacescraftMaterial)
         scene.add(spacecraft)
-        spacecraft.position.set(0, 0, MARS_RADIUS + 250000)
+
+        mars.position.set(0, 0, 0-(MARS_RADIUS + 250000))
+        camera.position.set(0, 0, 20)
         
         //orbit controls
-        // const controls = new OrbitControls(camera, renderer.domElement)
-        // controls.target.set(spacecraft.position.x, spacecraft.position.y, spacecraft.position.z)
-        // controls.update()
+        const controls = new OrbitControls(camera, renderer.domElement)
+        controls.target.set(spacecraft.position.x, spacecraft.position.y, spacecraft.position.z)
+        controls.update()
 
         const clock = new THREE.Clock()
         
         function animate() {
             let deltaTime = clock.getDelta()
 
-            spacecraft.position.z -= 100 * 9.8 * deltaTime
-            spacecraft.position.x += 10000 * deltaTime
-
-            camera.position.set(spacecraft.position.x - 20, spacecraft.position.y, spacecraft.position.z + 5)
-
-            camera.lookAt(spacecraft.position)
+            mars.position.z += 1000 * 9.8 * deltaTime
             
             requestAnimationFrame(animate)
             renderer.render(scene, camera)
