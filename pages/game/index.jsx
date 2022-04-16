@@ -46,7 +46,7 @@ const Game = () => {
             let altitude = spacecraft.position.z - (mars.position.z + MARS_RADIUS)
             console.log(`${Math.floor(altitude)} km`)
             
-            requestAnimationFrame(animate)
+            requestAnimationFrame(altitude>0 ? animate : null)
             renderer.render(scene, camera)
         }
 
