@@ -20,6 +20,7 @@ const Game = () => {
     const [sequence, setSequence] = useState([])
     const [phaseIndex, setPhaseIndex] = useState(0)
     const [altitude, setAltitude] = useState(0)
+    const [velocity, setVelocity] = useState(0)
 
     const setup = () => {
         const scene = new THREE.Scene()
@@ -42,17 +43,28 @@ const Game = () => {
         controls.update()
 
         const clock = new THREE.Clock()
+
+        let vel = initialVelocity
         
         function animate() {
             let deltaTime = clock.getDelta()
+            vel += GRAVITY
 
-            mars.position.z += initialVelocity * GRAVITY * deltaTime
+            mars.position.z += vel * deltaTime
 
             let alt = spacecraft.position.z - (mars.position.z + MARS_RADIUS)
             setAltitude(alt)
+            setVelocity(vel)
 
-            let nextPhase = sequence[phaseIndex++]
-            console.log(sequence)
+            let nextPhase = sequence[phaseIndex + 1]
+            if (nextPhase === undefined) requestAnimationFrame(null)
+
+            let nextPhaseTrigger = nextPhase.trigger[autonomyLevel] ?? nextPhase.trigger.full
+            if (nextPhaseTrigger.type === 'altitude' && alt < nextPhaseTrigger.value) {
+                setPhaseIndex(phaseIndex + 1)
+            } else if (nextPhaseTrigger.type === 'velocity' && vel < nextPhaseTrigger.value) {
+                setPhaseIndex(phaseIndex + 1)
+            }
             
             requestAnimationFrame(alt>0 ? animate : null)
             renderer.render(scene, camera)
@@ -75,9 +87,13 @@ const Game = () => {
         setSequence(Object.keys(profile.sequence).map(phase => {
             return profile.sequence[phase]
         }))
+
+        // setup()
     }, [])
 
-    useEffect(setup, [])
+    useEffect(() => {
+        if (sequence.length > 0) setup()
+    }, [sequence])
 
     return profile && (
         <div className="Game">
@@ -88,6 +104,7 @@ const Game = () => {
                 }
 
                 <p>Altitude: {Math.floor(altitude)} km</p>
+                <p>Velocity: {Math.ceil(velocity)} m/s</p>
             </div>
 
             {/* Canvas will be rendered here */}
