@@ -1,12 +1,11 @@
 import { useContext, useEffect, useState, useLayoutEffect } from 'react'
 import { useRouter } from 'next/router'
 import * as THREE from 'three'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import AppContext from '../../context'
 import mars, { MARS_RADIUS, GRAVITY } from '../../three/objects/mars'
-import spacecraft, { initialVelocity } from '../../three/objects/spacecraft'
+import { initialVelocity } from '../../three/objects/spacecraft'
 
 const toRadians = angle => angle * (Math.PI / 180)
 
@@ -38,15 +37,30 @@ const Game = () => {
         document.querySelector('.Game').appendChild(renderer.domElement)
 
         scene.add(mars)
-        scene.add(spacecraft)
+        // scene.add(spacecraft)
+
+        let spacecraft
+        let loader = new THREE.ObjectLoader()
+        fetch('/assets/models/msl-aeroshell.json')
+            .then(obj => obj.json())
+            .then(obj => {
+                spacecraft = loader.parse(obj).children[0]
+                scene.add(spacecraft)
+                spacecraft.material = new THREE.MeshBasicMaterial({
+                    color: 0xffffff
+                })
+                spacecraft.rotation.z = toRadians(angleOfAttack)
+                spacecraft.rotation.x = toRadians(angleOfAttack)
+                spacecraft.scale.set(2, 2, 2)
+            })
 
         mars.position.set(0, 0, 0-(MARS_RADIUS + 250000))
         camera.position.set(0, 0, 20)
         
         //orbit controls
         const controls = new OrbitControls(camera, renderer.domElement)
-        controls.target.set(spacecraft.position.x, spacecraft.position.y, spacecraft.position.z)
-        controls.update()
+        // controls.target.set(spacecraft.position.x, spacecraft.position.y, spacecraft.position.z)
+        // controls.update()
 
         const clock = new THREE.Clock()
 
@@ -54,7 +68,7 @@ const Game = () => {
         let acc = GRAVITY
         let angleOfAttack = 68
 
-        spacecraft.rotation.y = toRadians(-angleOfAttack)
+        // spacecraft.rotation.y = toRadians(-angleOfAttack)
         
         const animate = () => {
             let deltaTime = clock.getDelta()
@@ -63,7 +77,7 @@ const Game = () => {
             mars.position.z += Math.sin(toRadians(angleOfAttack)) * vel * deltaTime
             mars.rotation.y -= 0.000001 * Math.cos(toRadians(angleOfAttack)) * vel * deltaTime
 
-            let alt = spacecraft.position.z - (mars.position.z + MARS_RADIUS)
+            let alt = 0 - (mars.position.z + MARS_RADIUS)
 
             //drag
 
