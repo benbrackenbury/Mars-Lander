@@ -5,8 +5,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import AppContext from '../../context'
-import mars, { MARS_RADIUS } from '../../three/objects/mars'
-import spacecraft from '../../three/objects/spacecraft'
+import mars, { MARS_RADIUS, GRAVITY } from '../../three/objects/mars'
+import spacecraft, { initialVelocity } from '../../three/objects/spacecraft'
 
 const Game = () => {
     const router = useRouter()
@@ -41,7 +41,10 @@ const Game = () => {
         function animate() {
             let deltaTime = clock.getDelta()
 
-            mars.position.z += 1000 * 9.8 * deltaTime
+            mars.position.z += initialVelocity * GRAVITY * deltaTime
+
+            let altitude = spacecraft.position.z - (mars.position.z + MARS_RADIUS)
+            console.log(`${Math.floor(altitude)} km`)
             
             requestAnimationFrame(animate)
             renderer.render(scene, camera)

@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 
 const MARS_RADIUS = 3389500
+const GRAVITY = 3.721
 
 const marsGeometry = new THREE.SphereGeometry(MARS_RADIUS, 100, 100)
 const marsMaterial = new THREE.MeshBasicMaterial({
@@ -9,4 +10,4 @@ const marsMaterial = new THREE.MeshBasicMaterial({
 const mars = new THREE.Mesh(marsGeometry, marsMaterial)
 
 export default mars
-export { MARS_RADIUS }
+export { MARS_RADIUS, GRAVITY }
