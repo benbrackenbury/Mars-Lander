@@ -5,6 +5,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import AppContext from '../../context'
+import mars, { MARS_RADIUS } from '../../three/objects/mars'
 
 const Game = () => {
     const router = useRouter()
@@ -19,17 +20,18 @@ const Game = () => {
         const scene = new THREE.Scene()
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000000000)
 
-        const MARS_RADIUS = 3389500
+        // const MARS_RADIUS = 3389500
 
         const renderer = new THREE.WebGLRenderer()
         renderer.setSize(window.innerWidth, window.innerHeight)
         document.querySelector('.Game').appendChild(renderer.domElement)
 
-        const marsGeometry = new THREE.SphereGeometry(MARS_RADIUS, 100, 100)
-        const marsMaterial = new THREE.MeshBasicMaterial({
-            map: new THREE.TextureLoader().load('/assets/img/mars.jpg'),
-        })
-        const mars = new THREE.Mesh(marsGeometry, marsMaterial)
+        // const marsGeometry = new THREE.SphereGeometry(MARS_RADIUS, 100, 100)
+        // const marsMaterial = new THREE.MeshBasicMaterial({
+        //     map: new THREE.TextureLoader().load('/assets/img/mars.jpg'),
+        // })
+        // const mars = new THREE.Mesh(marsGeometry, marsMaterial)
+        console.log(mars)
         scene.add(mars)
 
         const spacecraftGeometry = new THREE.BoxGeometry(5, 5, 5)
@@ -46,7 +48,7 @@ const Game = () => {
         // controls.target.set(spacecraft.position.x, spacecraft.position.y, spacecraft.position.z)
         // controls.update()
 
-        const clock = new THREE.Clock()        
+        const clock = new THREE.Clock()
         
         function animate() {
             let deltaTime = clock.getDelta()
