@@ -56,7 +56,7 @@ const Game = () => {
 
         spacecraft.rotation.y = toRadians(-angleOfAttack)
         
-        function animate() {
+        const animate = () => {
             let deltaTime = clock.getDelta()
             vel += acc
 
@@ -73,9 +73,9 @@ const Game = () => {
 
             let nextPhaseTrigger = nextPhase.trigger[autonomyLevel] ?? nextPhase.trigger.full
             if (nextPhaseTrigger.type === 'altitude' && alt < nextPhaseTrigger.value) {
-                setPhaseIndex(phaseIndex + 1)
+                setPhaseIndex(phaseIndex => phaseIndex + 1)
             } else if (nextPhaseTrigger.type === 'velocity' && vel < nextPhaseTrigger.value) {
-                setPhaseIndex(phaseIndex + 1)
+                setPhaseIndex(phaseIndex => phaseIndex + 1)
             }
 
             //set states for UI
