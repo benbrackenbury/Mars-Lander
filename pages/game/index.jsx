@@ -8,6 +8,8 @@ import AppContext from '../../context'
 import mars, { MARS_RADIUS, GRAVITY } from '../../three/objects/mars'
 import spacecraft, { initialVelocity } from '../../three/objects/spacecraft'
 
+const toRadians = angle => angle * (Math.PI / 180)
+
 const Game = () => {
     const router = useRouter()
 
@@ -19,8 +21,12 @@ const Game = () => {
 
     const [sequence, setSequence] = useState([])
     const [phaseIndex, setPhaseIndex] = useState(0)
+    const [timeElapsed, setTimeElapsed] = useState(0)
     const [altitude, setAltitude] = useState(0)
+    const [acceleration, setAcceleration] = useState(0)
     const [velocity, setVelocity] = useState(0)
+
+    let currentPhaseIndex = 0 
 
     const setup = () => {
         const scene = new THREE.Scene()
@@ -45,17 +51,23 @@ const Game = () => {
         const clock = new THREE.Clock()
 
         let vel = initialVelocity
+        let acc = GRAVITY
+        let angleOfAttack = 68
+
+        spacecraft.rotation.y = toRadians(-angleOfAttack)
         
         function animate() {
             let deltaTime = clock.getDelta()
-            vel += GRAVITY
+            vel += acc
 
-            mars.position.z += vel * deltaTime
+            mars.position.z += Math.sin(toRadians(angleOfAttack)) * vel * deltaTime
+            mars.rotation.y -= 0.000001 * Math.cos(toRadians(angleOfAttack)) * vel * deltaTime
 
             let alt = spacecraft.position.z - (mars.position.z + MARS_RADIUS)
-            setAltitude(alt)
-            setVelocity(vel)
 
+            //drag
+
+            //next phase stuff
             let nextPhase = sequence[phaseIndex + 1]
             if (nextPhase === undefined) requestAnimationFrame(null)
 
@@ -65,7 +77,14 @@ const Game = () => {
             } else if (nextPhaseTrigger.type === 'velocity' && vel < nextPhaseTrigger.value) {
                 setPhaseIndex(phaseIndex + 1)
             }
+
+            //set states for UI
+            setAltitude(alt)
+            setVelocity(vel)
+            setAcceleration(acc)
+            setTimeElapsed(clock.elapsedTime)
             
+            //animation loop
             requestAnimationFrame(alt>0 ? animate : null)
             renderer.render(scene, camera)
         }
@@ -95,6 +114,11 @@ const Game = () => {
         if (sequence.length > 0) setup()
     }, [sequence])
 
+    useEffect(() => {
+        currentPhaseIndex = phaseIndex
+        console.log('change', {phaseIndex, currentPhaseIndex})
+    }, [phaseIndex])
+
     return profile && (
         <div className="Game">
             <div className="telemetry">
@@ -103,8 +127,10 @@ const Game = () => {
                     : <p>Loading...</p>
                 }
 
-                <p>Altitude: {Math.floor(altitude)} km</p>
+                <p>T+ {Math.floor(timeElapsed)}s</p>
+                <p>Altitude: {Math.floor(altitude)} m</p>
                 <p>Velocity: {Math.ceil(velocity)} m/s</p>
+                <p>Net Acceleration: {acceleration.toFixed(2)} m/s^2</p>
             </div>
 
             {/* Canvas will be rendered here */}
