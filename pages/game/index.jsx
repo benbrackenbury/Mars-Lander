@@ -17,12 +17,17 @@ const Game = () => {
         autonomyLevel,
     } = useContext(AppContext)
 
+    const [sequence, setSequence] = useState([])
+    const [phaseIndex, setPhaseIndex] = useState(0)
+    const [altitude, setAltitude] = useState(0)
+
     const setup = () => {
         const scene = new THREE.Scene()
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000000000)
 
         const renderer = new THREE.WebGLRenderer()
         renderer.setSize(window.innerWidth, window.innerHeight)
+        document.querySelectorAll('canvas').forEach(canvas => canvas.remove())
         document.querySelector('.Game').appendChild(renderer.domElement)
 
         scene.add(mars)
@@ -43,10 +48,13 @@ const Game = () => {
 
             mars.position.z += initialVelocity * GRAVITY * deltaTime
 
-            let altitude = spacecraft.position.z - (mars.position.z + MARS_RADIUS)
-            console.log(`${Math.floor(altitude)} km`)
+            let alt = spacecraft.position.z - (mars.position.z + MARS_RADIUS)
+            setAltitude(alt)
+
+            let nextPhase = sequence[phaseIndex++]
+            console.log(sequence)
             
-            requestAnimationFrame(altitude>0 ? animate : null)
+            requestAnimationFrame(alt>0 ? animate : null)
             renderer.render(scene, camera)
         }
 
@@ -58,9 +66,6 @@ const Game = () => {
             renderer.setSize(window.innerWidth, window.innerHeight)
         })
     }
-
-    const [sequence, setSequence] = useState([])
-    const [phaseIndex, setPhaseIndex] = useState(0)
 
     useEffect(() => {
         //go back to menu if no profile loaded
@@ -76,9 +81,14 @@ const Game = () => {
 
     return profile && (
         <div className="Game">
-            { sequence[phaseIndex]?.name 
-                ? <pre>{sequence[phaseIndex].name}</pre>
-                : <pre>Loading...</pre> }
+            <div className="telemetry">
+                { sequence[phaseIndex]?.name 
+                    ? <p className="phase">{sequence[phaseIndex].name}</p>
+                    : <p>Loading...</p>
+                }
+
+                <p>Altitude: {Math.floor(altitude)} km</p>
+            </div>
 
             {/* Canvas will be rendered here */}
         </div>
