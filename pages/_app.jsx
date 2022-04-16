@@ -1,4 +1,4 @@
-import react, { useState } from 'react'
+import react, { useState, useEffect } from 'react'
 
 import '../style/index.scss'
 import AppContext from '../context'

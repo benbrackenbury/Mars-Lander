@@ -31,7 +31,6 @@ const Game = () => {
         //     map: new THREE.TextureLoader().load('/assets/img/mars.jpg'),
         // })
         // const mars = new THREE.Mesh(marsGeometry, marsMaterial)
-        console.log(mars)
         scene.add(mars)
 
         const spacecraftGeometry = new THREE.BoxGeometry(5, 5, 5)
