@@ -47,12 +47,15 @@ const Game = () => {
                 spacecraft = loader.parse(obj).children[0]
                 scene.add(spacecraft)
                 spacecraft.material = new THREE.MeshBasicMaterial({
-                    color: 0xffffff
+                    color: 0x555555
                 })
                 spacecraft.rotation.z = toRadians(angleOfAttack)
                 spacecraft.rotation.x = toRadians(angleOfAttack)
                 spacecraft.scale.set(2, 2, 2)
             })
+
+        const overheadLight = new THREE.PointLight(0xffffff, 1, 10)
+        scene.add(overheadLight)
 
         mars.position.set(0, 0, 0-(MARS_RADIUS + 250000))
         camera.position.set(0, 0, 20)
