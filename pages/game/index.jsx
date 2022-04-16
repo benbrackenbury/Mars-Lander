@@ -66,8 +66,8 @@ const Game = () => {
         let angleOfAttack = 68
 
         spacecraft.scale.set(2, 2, 2)
+        spacecraft.rotation.x = toRadians(90)
         spacecraft.rotation.z = toRadians(angleOfAttack)
-        spacecraft.rotation.x = toRadians(angleOfAttack)
         
         const animate = () => {
             let deltaTime = clock.getDelta()
@@ -77,9 +77,6 @@ const Game = () => {
             mars.rotation.y -= 0.000001 * Math.cos(toRadians(angleOfAttack)) * vel * deltaTime
 
             let alt = 0 - (mars.position.z + MARS_RADIUS)
-
-            //rotate spacecraft
-            spacecraft.rotation.x += 0.1 * deltaTime
 
             //drag
 
