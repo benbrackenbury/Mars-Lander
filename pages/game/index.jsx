@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import AppContext from '../../context'
+import { useLocalStorage } from '../../hooks'
 import mars, { MARS_RADIUS, GRAVITY } from '../../three/objects/mars'
 import { initialVelocity } from '../../three/objects/spacecraft'
 
@@ -20,13 +21,11 @@ const Game = () => {
     } = useContext(AppContext)
 
     const [sequence, setSequence] = useState([])
-    const [phaseIndex, setPhaseIndex] = useState(0)
+    const [phaseIndex, setPhaseIndex] = useLocalStorage('phaseIndex', 0)
     const [timeElapsed, setTimeElapsed] = useState(0)
     const [altitude, setAltitude] = useState(0)
     const [acceleration, setAcceleration] = useState(0)
     const [velocity, setVelocity] = useState(0)
-
-    let currentPhaseIndex = 0 
 
     const setup = async () => {
         const scene = new THREE.Scene()
@@ -126,11 +125,6 @@ const Game = () => {
     useEffect(() => {
         if (sequence.length > 0) setup()
     }, [sequence])
-
-    useEffect(() => {
-        currentPhaseIndex = phaseIndex
-        console.log('change', {phaseIndex, currentPhaseIndex})
-    }, [phaseIndex])
 
     return profile && (
         <div className="Game">
