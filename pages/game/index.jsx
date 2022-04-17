@@ -98,7 +98,7 @@ const Game = () => {
                 phaseIndex++
             }
 
-            //set states for UI
+            //update UI
             setAltitude(alt)
             setVelocity(vel)
             setAcceleration(acc)
