@@ -46,8 +46,7 @@ const Game = () => {
         let spacecraft = await (await loader.loadAsync('/assets/models/msl-aeroshell.gltf')).scene.children[0]
         scene.add(spacecraft)
         spacecraft.material = new THREE.MeshPhongMaterial({
-            color: 0xffffff,
-            roughness: 0.5,
+            color: 0xffffff
         })
 
         let light = new THREE.DirectionalLight(0xffffff)
