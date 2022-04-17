@@ -7,7 +7,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import AppContext from '../../context'
 import mars, { MARS_RADIUS, GRAVITY } from '../../three/objects/mars'
 import { initialVelocity } from '../../three/objects/spacecraft'
-import { calculateDrag } from '../../three/physics'
 
 const toRadians = angle => angle * (Math.PI / 180)
 
@@ -81,8 +80,6 @@ const Game = () => {
 
             //drag
             if (sequence[phaseIndex].key === 'entry') {
-                // let drag = calculateDrag(vel, alt, profile.mass, profile.crossSectionArea)
-                // acc = GRAVITY - drag
                 let density = 0.02 * Math.exp(-alt/11100)
                 let dragNewtons = 0.5 * density * Math.pow(vel, 2) * profile.crossSectionArea
                 let dragAcc = dragNewtons / profile.mass
@@ -97,10 +94,8 @@ const Game = () => {
 
             let nextPhaseTrigger = nextPhase.trigger[autonomyLevel] ?? nextPhase.trigger.full
             if (nextPhaseTrigger.type === 'altitude' && alt < nextPhaseTrigger.value) {
-                // setPhaseIndex(phaseIndex => phaseIndex + 1)
                 phaseIndex++
             } else if (nextPhaseTrigger.type === 'velocity' && vel < nextPhaseTrigger.value) {
-                // setPhaseIndex(phaseIndex => phaseIndex + 1)
                 phaseIndex++
             }
 
