@@ -1,3 +1,3 @@
 # Mars Lander
 
-Writen in Next.JS
+Mars Lander project src for CS39440 Major Project
