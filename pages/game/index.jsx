@@ -87,6 +87,8 @@ const Game = () => {
                 let dragNewtons = 0.5 * density * Math.pow(vel, 2) * profile.crossSectionArea
                 let dragAcc = dragNewtons / profile.mass
                 acc = GRAVITY - dragAcc
+            } else {
+                acc = GRAVITY
             }
 
             //next phase stuff
