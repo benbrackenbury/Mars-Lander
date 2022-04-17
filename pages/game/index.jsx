@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useLayoutEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
@@ -21,7 +21,7 @@ const Game = () => {
     } = useContext(AppContext)
 
     const [sequence, setSequence] = useState([])
-    const [phaseIndex, setPhaseIndex] = useLocalStorage('phaseIndex', 0)
+    const [phaseIndex, setPhaseIndex] = useState('phaseIndex', 0)
     const [timeElapsed, setTimeElapsed] = useState(0)
     const [altitude, setAltitude] = useState(0)
     const [acceleration, setAcceleration] = useState(0)
@@ -78,6 +78,7 @@ const Game = () => {
             let alt = 0 - (mars.position.z + MARS_RADIUS)
 
             //drag
+            console.log('phaseIndex', phaseIndex)
 
             //next phase stuff
             let nextPhase = sequence[phaseIndex + 1]
