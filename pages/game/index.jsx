@@ -20,7 +20,6 @@ const Game = () => {
     } = useContext(AppContext)
 
     const [sequence, setSequence] = useState([])
-    // const [phaseIndex, setPhaseIndex] = useState(0)
     const [timeElapsed, setTimeElapsed] = useState(0)
     const [altitude, setAltitude] = useState(0)
     const [acceleration, setAcceleration] = useState(0)
