@@ -11,7 +11,8 @@ const MenuScreen = () => {
   //read global states
   const { 
     selectedProfile, setSelectedProfile,
-    autonomyLevel, setAutonomyLevel
+    autonomyLevel, setAutonomyLevel,
+    antialias, setAntialias
   } = useContext(AppContext)
 
   //fetch all profiles
@@ -51,6 +52,11 @@ const MenuScreen = () => {
               <option value="guided">Guided</option>
               <option value="none">None</option>
             </select>
+
+            <div id="antialiasing">
+              <input type="checkbox" name="antialias" id="antialias" checked={antialias} onChange={e => setAntialias(e.target.checked)}/>
+              <label htmlFor="antialias"> Enable antialiasing (may affect performance)</label>
+            </div>
 
           </form>
 
