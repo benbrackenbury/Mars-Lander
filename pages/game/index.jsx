@@ -48,7 +48,7 @@ const Game = () => {
             color: 0xff0000,
         })
         const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial)
-        mars.add(atmosphere)
+        // mars.add(atmosphere)
 
         //spacecraft
         let loader = new GLTFLoader()
