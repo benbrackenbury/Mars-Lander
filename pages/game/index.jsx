@@ -24,6 +24,7 @@ const Game = () => {
     const [altitude, setAltitude] = useState(0)
     const [acceleration, setAcceleration] = useState(0)
     const [velocity, setVelocity] = useState(0)
+    const [nextPhaseUI, setNextPhaseUI] = useState(null)
 
     let phaseIndex = 0
 
@@ -82,6 +83,7 @@ const Game = () => {
                 let dragNewtons = 0.5 * density * Math.pow(vel, 2) * profile.crossSectionArea
                 let dragAcc = dragNewtons / profile.mass
                 acc = GRAVITY - dragAcc
+                spacecraft.material.color = new THREE.Color(0xffaaaa)
             } else {
                 acc = GRAVITY
             }
@@ -102,7 +104,9 @@ const Game = () => {
             setVelocity(vel)
             setAcceleration(acc)
             setTimeElapsed(clock.elapsedTime)
+            setNextPhaseUI(nextPhase)
             document.querySelector('.phase').innerHTML = sequence[phaseIndex].name
+            document.querySelector('.guidence').innerHTML = sequence[phaseIndex].description[autonomyLevel]
             
             //animation loop
             requestAnimationFrame(alt>0 ? animate : animate)
@@ -146,6 +150,21 @@ const Game = () => {
                 <p>Altitude: {Math.floor(altitude)} m</p>
                 <p>Velocity: {Math.ceil(velocity)} m/s</p>
                 <p>Net Acceleration: {acceleration.toFixed(2)} m/s^2</p>
+            </div>
+
+            <div className="sc-info">
+                <p className="description">{profile.description}</p>
+                {nextPhaseUI && (
+                    <div className="upnext">
+                        <p>Up Next</p>
+                        <p>{nextPhaseUI.name}</p>
+                        {nextPhaseUI.trigger.guided && autonomyLevel==='guided' ? (
+                            <p>Awaiting input</p>
+                        ) : (
+                            <p>when {nextPhaseUI.trigger.full.type} = {nextPhaseUI.trigger.full.value}</p>
+                        )}
+                    </div>
+                )}
             </div>
 
             {autonomyLevel !== 'none' && sequence[phaseIndex] && (
