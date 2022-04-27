@@ -148,6 +148,12 @@ const Game = () => {
                 <p>Net Acceleration: {acceleration.toFixed(2)} m/s^2</p>
             </div>
 
+            {autonomyLevel !== 'none' && sequence[phaseIndex] && (
+                <div className="guidence">
+                    {sequence[phaseIndex].description && sequence[phaseIndex].description[autonomyLevel]}
+                </div>
+            )}
+
             {/* Canvas will be rendered here */}
         </div>
    )
