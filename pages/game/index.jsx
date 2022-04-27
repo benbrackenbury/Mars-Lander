@@ -41,8 +41,16 @@ const Game = () => {
         scene.add(mars)
         mars.position.set(0, 0, 0-(MARS_RADIUS + 250000))
         camera.position.set(0, 0, 20)
-        // scene.add(spacecraft)
 
+        //atmosphere
+        const atmosphereGeometry = new THREE.SphereGeometry(3389500+150000, 100, 100)
+        const atmosphereMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+        })
+        const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial)
+        mars.add(atmosphere)
+
+        //spacecraft
         let loader = new GLTFLoader()
         let spacecraft = await (await loader.loadAsync('/assets/models/msl-aeroshell.gltf')).scene.children[0]
         scene.add(spacecraft)
@@ -50,9 +58,14 @@ const Game = () => {
             color: 0xffffff
         })
 
+        //directional light for spacecraft
         let light = new THREE.DirectionalLight(0xffffff)
         light.position.set(1, 1, 10).normalize()
         scene.add(light)
+
+        // ambient light
+        const ambientlight = new THREE.AmbientLight(0xffffff, 0.1)
+        scene.add(ambientlight)
 
         //stars
         const starGeometry = new THREE.BufferGeometry()
