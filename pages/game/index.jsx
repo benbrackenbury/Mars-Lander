@@ -6,6 +6,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import AppContext from '../../context'
 import mars, { MARS_RADIUS, GRAVITY } from '../../three/objects/mars'
+import exhaust from '../../three/objects/exhaust'
 import { initialVelocity } from '../../three/objects/spacecraft'
 
 const toRadians = angle => angle * (Math.PI / 180)
@@ -84,6 +85,9 @@ const Game = () => {
         })
         const stars = new THREE.Points(starGeometry, starMaterial)
         scene.add(stars)
+
+        spacecraft.add(exhaust)
+        exhaust.scale.set(0, 0, 0)
         
         //orbit controls
         const controls = new OrbitControls(camera, renderer.domElement)
@@ -95,29 +99,62 @@ const Game = () => {
         let vel = initialVelocity
         let acc = GRAVITY
         let angleOfAttack = 68
+        let throttle = 0
+        let fuelRemaining = 100
+        let mass = profile.mass
 
         spacecraft.scale.set(2, 2, 2)
-        spacecraft.rotation.x = toRadians(90)
-        spacecraft.rotation.z = toRadians(angleOfAttack)
+
+        let keysDown = {}
+        document.addEventListener('keydown', e => {
+            keysDown[e.key] = true
+        })
+        document.addEventListener('keyup', e => {
+            keysDown[e.key] = false
+        })
         
         const animate = () => {
             let deltaTime = clock.getDelta()
             vel += acc
 
-            mars.position.z += Math.sin(toRadians(angleOfAttack)) * vel * deltaTime
-            mars.rotation.y -= 0.000001 * Math.cos(toRadians(angleOfAttack)) * vel * deltaTime
+            //angle of attack and velocity
+            if (sequence[phaseIndex].key === 'pre-entry' ||
+                sequence[phaseIndex].key === 'entry' ||
+                sequence[phaseIndex].key === 'descent-pre-parachute'
+            ) {
+                mars.position.z += Math.sin(toRadians(angleOfAttack)) * vel * deltaTime
+                mars.rotation.y -= 0.000001 * Math.cos(toRadians(angleOfAttack)) * vel * deltaTime
+                spacecraft.rotation.x = toRadians(90)
+                spacecraft.rotation.y = toRadians(0)
+                spacecraft.rotation.z = toRadians(angleOfAttack)
+            } else {
+                mars.position.z += vel * deltaTime
+                spacecraft.rotation.x = toRadians(90)
+                spacecraft.rotation.y = toRadians(0)
+                spacecraft.rotation.z = toRadians(0)
+            }
 
+            //altitude
             let alt = 0 - (mars.position.z + MARS_RADIUS)
 
-            //drag
-            if (sequence[phaseIndex].key === 'entry') {
-                let density = 0.02 * Math.exp(-alt/11100)
-                let dragNewtons = 0.5 * density * Math.pow(vel, 2) * profile.crossSectionArea
-                let dragAcc = dragNewtons / profile.mass
-                acc = GRAVITY - dragAcc
-                spacecraft.material.color = new THREE.Color(0xffaaaa)
-            } else {
-                acc = GRAVITY
+            //drag & acceleration
+            switch (sequence[phaseIndex].key) {
+                case 'entry':
+                    let density = 0.02 * Math.exp(-alt/11100)
+                    let dragNewtons = 0.5 * density * Math.pow(vel, 2) * profile.crossSectionArea
+                    let dragAcc = dragNewtons / mass
+                    acc = GRAVITY - dragAcc
+                    spacecraft.material.color = new THREE.Color(0xffaaaa)
+                    break
+                case 'descent-post-parachute':
+                    acc = -36 / mass
+                    break
+                case 'landing':
+                    acc = GRAVITY - (throttle * 2 * GRAVITY)
+                    break
+                default:
+                    acc = GRAVITY
+                    spacecraft.material.color = new THREE.Color(0xffffff)
             }
 
             //next phase stuff
@@ -129,6 +166,40 @@ const Game = () => {
                 phaseIndex++
             } else if (nextPhaseTrigger.type === 'velocity' && vel < nextPhaseTrigger.value) {
                 phaseIndex++
+            } else if (nextPhaseTrigger.type === 'key') {
+                if (keysDown[nextPhaseTrigger.value]) {
+                    phaseIndex++
+                }
+            }
+
+            //throttle
+            if (sequence[phaseIndex].key === 'landing') {
+                document.querySelector('.landing-telemetry').classList.remove('hidden')
+                if (fuelRemaining > 0) {
+                    if (keysDown['Shift']) {
+                        if (throttle < 1) {
+                            throttle += 0.01
+                        }
+                    }
+                    if (keysDown['Control']) {
+                        if (throttle > 0) {
+                            throttle -= 0.01
+                        }
+                    }
+                    if (keysDown['e']) {
+                        throttle = 0.5
+                        keysDown['e'] = false
+                    }
+                } else {
+                    throttle = 0
+                }
+
+                fuelRemaining -= throttle * deltaTime * (throttle > 0.5 ? 1.5 : 1)
+                mass = 900 - 100 + fuelRemaining
+
+                exhaust.scale.set(1, -throttle, 1)
+                document.querySelector('#throttle-label').innerHTML = `Throttle: ${Math.floor(throttle * 100)}%`
+                document.querySelector('#fuel-label').innerHTML = `Fuel Remaining: ${Math.floor(fuelRemaining)}%`
             }
 
             //update UI
@@ -182,6 +253,20 @@ const Game = () => {
                 <p>Altitude: {Math.floor(altitude)} m</p>
                 <p>Velocity: {Math.ceil(velocity)} m/s</p>
                 <p>Net Acceleration: {acceleration.toFixed(2)} m/s^2</p>
+
+                <div className="landing-telemetry hidden">
+                    <br />
+                    <p id="throttle-label">Throttle: 0%</p>
+                    <div className="throttle-guage">
+                        <div className="throttle-bar"></div>
+                    </div>
+
+                    <p id="fuel-label">Fuel: 100%</p>
+                    <div className="fuel-guage">
+                        <div className="fuel-bar"></div>
+                    </div>
+                </div>
+
             </div>
 
             <div className="sc-info">
