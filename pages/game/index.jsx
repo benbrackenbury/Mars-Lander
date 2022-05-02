@@ -84,7 +84,7 @@ const Game = () => {
             color: 0xffffff,
         })
         const stars = new THREE.Points(starGeometry, starMaterial)
-        scene.add(stars)
+        // scene.add(stars)
 
         spacecraft.add(exhaust)
         exhaust.scale.set(0, 0, 0)
