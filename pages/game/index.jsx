@@ -9,7 +9,7 @@ import mars, { MARS_RADIUS, GRAVITY } from '../../three/objects/mars'
 import exhaust from '../../three/objects/exhaust'
 import { initialVelocity } from '../../three/objects/spacecraft'
 
-const toRadians = angle => angle * (Math.PI / 180)
+const toRadians = degrees => degrees * (Math.PI / 180)
 
 const Game = () => {
     const router = useRouter()
@@ -40,7 +40,7 @@ const Game = () => {
         document.querySelector('.Game').appendChild(renderer.domElement)
 
         scene.add(mars)
-        mars.position.set(0, 0, 0-(MARS_RADIUS + 250000))
+        mars.position.set(0, 0, -(MARS_RADIUS + 250000))
         camera.position.set(0, 0, 20)
 
         //atmosphere
@@ -120,6 +120,7 @@ const Game = () => {
             //angle of attack and velocity
             if (sequence[phaseIndex].key === 'pre-entry' ||
                 sequence[phaseIndex].key === 'entry' ||
+                sequence[phaseIndex].key === 'aeroshell-jettison' ||
                 sequence[phaseIndex].key === 'descent-pre-parachute'
             ) {
                 mars.position.z += Math.sin(toRadians(angleOfAttack)) * vel * deltaTime
@@ -172,6 +173,16 @@ const Game = () => {
                 }
             }
 
+            //calc progress to next trigger
+            let progress = 0
+            if (nextPhaseTrigger.type === 'altitude') {
+                progress = nextPhaseTrigger.value / alt
+            } else if (nextPhaseTrigger.type === 'velocity') {
+                progress =  nextPhaseTrigger.value / vel
+            } else if (nextPhaseTrigger.type === 'key') {
+                progress = keysDown[nextPhaseTrigger.value] ? 1 : 0
+            }
+
             //throttle
             if (sequence[phaseIndex].key === 'landing') {
                 document.querySelector('.landing-telemetry').classList.remove('hidden')
@@ -209,7 +220,8 @@ const Game = () => {
             setTimeElapsed(clock.elapsedTime)
             setNextPhaseUI(nextPhase)
             document.querySelector('.phase').innerHTML = sequence[phaseIndex].name
-            document.querySelector('.guidence').innerHTML = sequence[phaseIndex].description[autonomyLevel]
+            document.querySelector('.guidence > .text').innerHTML = sequence[phaseIndex].description[autonomyLevel]
+            document.querySelector('.progress-bar').style.transform = `scaleX(${progress})`
             
             //animation loop
             requestAnimationFrame(alt>0 ? animate : animate)
@@ -286,7 +298,10 @@ const Game = () => {
 
             {autonomyLevel !== 'none' && sequence[phaseIndex] && (
                 <div className="guidence">
-                    {sequence[phaseIndex].description && sequence[phaseIndex].description[autonomyLevel]}
+                    <div className="progress-bar"></div>
+                    <div className="text">
+                        {sequence[phaseIndex].description && sequence[phaseIndex].description[autonomyLevel]}
+                    </div>
                 </div>
             )}
 

@@ -27,6 +27,21 @@
           }
         }
       },
+
+      "aeorshellJettison": {
+        "key": "aeroshell-jettison",
+        "name": "Aeroshell Jettison",
+        "description": {
+          "full": "The protective aeroshell is no longer needed, so is jettisonned.",
+          "guided": "The protective aeroshell is no longer needed, press SPACE to jettison."
+        },
+        "trigger": {
+          "full": {
+            "type": "velocity",
+            "value": 330
+          }
+        }
+      },
       "descentPreParachute": {
         "key": "descent-pre-parachute",
         "name": "Descent (free fall)",
@@ -37,7 +52,11 @@
         "trigger": {
           "full": {
             "type": "velocity",
-            "value": 330
+            "value": 300
+          },
+          "guided": {
+            "type": "key",
+            "value": " "
           }
         }
       },
