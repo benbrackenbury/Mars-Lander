@@ -102,6 +102,7 @@ const Game = () => {
         let throttle = 0
         let fuelRemaining = 100
         let mass = profile.mass
+        let isPaused = false
 
         spacecraft.scale.set(2, 2, 2)
 
@@ -115,24 +116,27 @@ const Game = () => {
         
         const animate = () => {
             let deltaTime = clock.getDelta()
-            vel += acc
 
-            //angle of attack and velocity
-            if (sequence[phaseIndex].key === 'pre-entry' ||
-                sequence[phaseIndex].key === 'entry' ||
-                sequence[phaseIndex].key === 'aeroshell-jettison' ||
-                sequence[phaseIndex].key === 'descent-pre-parachute'
-            ) {
-                mars.position.z += Math.sin(toRadians(angleOfAttack)) * vel * deltaTime
-                mars.rotation.y -= 0.000001 * Math.cos(toRadians(angleOfAttack)) * vel * deltaTime
-                spacecraft.rotation.x = toRadians(90)
-                spacecraft.rotation.y = toRadians(0)
-                spacecraft.rotation.z = toRadians(angleOfAttack)
-            } else {
-                mars.position.z += vel * deltaTime
-                spacecraft.rotation.x = toRadians(90)
-                spacecraft.rotation.y = toRadians(0)
-                spacecraft.rotation.z = toRadians(0)
+            if (!isPaused) {
+                //increase or decrease velocity
+                vel += acc
+                //angle of attack and velocity
+                if (sequence[phaseIndex].key === 'pre-entry' ||
+                    sequence[phaseIndex].key === 'entry' ||
+                    sequence[phaseIndex].key === 'aeroshell-jettison' ||
+                    sequence[phaseIndex].key === 'descent-pre-parachute'
+                ) {
+                    mars.position.z += Math.sin(toRadians(angleOfAttack)) * vel * deltaTime
+                    mars.rotation.y -= 0.000001 * Math.cos(toRadians(angleOfAttack)) * vel * deltaTime
+                    spacecraft.rotation.x = toRadians(90)
+                    spacecraft.rotation.y = toRadians(0)
+                    spacecraft.rotation.z = toRadians(angleOfAttack)
+                } else {
+                    mars.position.z += vel * deltaTime
+                    spacecraft.rotation.x = toRadians(90)
+                    spacecraft.rotation.y = toRadians(0)
+                    spacecraft.rotation.z = toRadians(0)
+                }
             }
 
             //altitude
@@ -168,8 +172,10 @@ const Game = () => {
             } else if (nextPhaseTrigger.type === 'velocity' && vel < nextPhaseTrigger.value) {
                 phaseIndex++
             } else if (nextPhaseTrigger.type === 'key') {
+                isPaused = true
                 if (keysDown[nextPhaseTrigger.value]) {
                     phaseIndex++
+                    isPaused = false
                 }
             }
 
