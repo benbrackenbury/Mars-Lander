@@ -122,7 +122,6 @@ const Game = () => {
                 clock.running = true
                 //increase or decrease velocity
                 vel += acc
-
                 //angle of attack and velocity
                 if (sequence[phaseIndex].key === 'pre-entry' ||
                     sequence[phaseIndex].key === 'entry' ||
@@ -152,7 +151,7 @@ const Game = () => {
             }
 
             //altitude
-            let alt = 0 - (mars.position.z + MARS_RADIUS)
+            let alt = spacecraft.position.z - (mars.position.z + MARS_RADIUS)
 
             //drag & acceleration
             switch (sequence[phaseIndex].key) {
