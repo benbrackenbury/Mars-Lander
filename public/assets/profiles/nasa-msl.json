@@ -83,7 +83,7 @@
         "name": "Landing",
         "description": {
           "full": "The spacecraft is brought to the surface gently using a controlled propulsive landing.",
-          "guided": "Press SHIFT to increase throttle and CONTROL to decrease throttle. Press E to equalise thrust-to-weight. Hold C to see alternate camera view."
+          "guided": "Press SHIFT to increase throttle and CONTROL to decrease throttle. Press E to equalise thrust-to-weight."
         },
         "trigger": {
           "full": {

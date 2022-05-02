@@ -103,6 +103,7 @@ const Game = () => {
         let fuelRemaining = 100
         let mass = profile.mass
         let isPaused = false
+        let lastRecordedElapsedTime = 0
 
         spacecraft.scale.set(2, 2, 2)
 
@@ -118,8 +119,10 @@ const Game = () => {
             let deltaTime = clock.getDelta()
 
             if (!isPaused) {
+                clock.running = true
                 //increase or decrease velocity
                 vel += acc
+
                 //angle of attack and velocity
                 if (sequence[phaseIndex].key === 'pre-entry' ||
                     sequence[phaseIndex].key === 'entry' ||
@@ -137,6 +140,15 @@ const Game = () => {
                     spacecraft.rotation.y = toRadians(0)
                     spacecraft.rotation.z = toRadians(0)
                 }
+                //make sure UI is fully visible if unpaused
+                document.querySelector('.telemetry').classList.remove('paused')
+                document.querySelector('.sc-info').classList.remove('paused')
+            } else {
+
+                clock.running = false
+                //fade out UI if paused
+                document.querySelector('.telemetry').classList.add('paused')
+                document.querySelector('.sc-info').classList.add('paused')
             }
 
             //altitude
@@ -172,6 +184,8 @@ const Game = () => {
             } else if (nextPhaseTrigger.type === 'velocity' && vel < nextPhaseTrigger.value) {
                 phaseIndex++
             } else if (nextPhaseTrigger.type === 'key') {
+                let elapsed = clock.elapsedTime
+                if (elapsed !== 0) lastRecordedElapsedTime += elapsed
                 isPaused = true
                 if (keysDown[nextPhaseTrigger.value]) {
                     phaseIndex++
@@ -223,7 +237,7 @@ const Game = () => {
             setAltitude(alt)
             setVelocity(vel)
             setAcceleration(acc)
-            setTimeElapsed(clock.elapsedTime)
+            setTimeElapsed(clock.elapsedTime + lastRecordedElapsedTime)
             setNextPhaseUI(nextPhase)
             document.querySelector('.phase').innerHTML = sequence[phaseIndex].name
             document.querySelector('.guidence > .text').innerHTML = sequence[phaseIndex].description[autonomyLevel]

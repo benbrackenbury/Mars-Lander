@@ -3,6 +3,10 @@
     height: 100vh;
     overflow: hidden;
 
+    .paused {
+        opacity: 0.5;
+    }
+
     .telemetry {
         position: absolute;
         top: 0;
