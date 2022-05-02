@@ -51,7 +51,7 @@ const Game = () => {
             transparent: true
         })
         const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial)
-        mars.add(atmosphere)
+        // mars.add(atmosphere)
 
         //spacecraft
         let loader = new GLTFLoader()
@@ -176,31 +176,33 @@ const Game = () => {
 
             //next phase stuff
             let nextPhase = sequence[phaseIndex + 1]
-            if (nextPhase === undefined) requestAnimationFrame(null)
-
-            let nextPhaseTrigger = nextPhase.trigger[autonomyLevel] ?? nextPhase.trigger.full
-            if (nextPhaseTrigger.type === 'altitude' && alt < nextPhaseTrigger.value) {
-                phaseIndex++
-            } else if (nextPhaseTrigger.type === 'velocity' && vel < nextPhaseTrigger.value) {
-                phaseIndex++
-            } else if (nextPhaseTrigger.type === 'key') {
-                let elapsed = clock.elapsedTime
-                if (elapsed !== 0) lastRecordedElapsedTime += elapsed
-                isPaused = true
-                if (keysDown[nextPhaseTrigger.value]) {
-                    phaseIndex++
-                    isPaused = false
-                }
-            }
-
-            //calc progress to next trigger
             let progress = 0
-            if (nextPhaseTrigger.type === 'altitude') {
-                progress = nextPhaseTrigger.value / alt
-            } else if (nextPhaseTrigger.type === 'velocity') {
-                progress =  nextPhaseTrigger.value / vel
-            } else if (nextPhaseTrigger.type === 'key') {
-                progress = keysDown[nextPhaseTrigger.value] ? 1 : 0
+            if (nextPhase !== undefined) {
+                let nextPhaseTrigger = nextPhase.trigger[autonomyLevel] ?? nextPhase.trigger.full
+                if (nextPhaseTrigger.type === 'altitude' && alt < nextPhaseTrigger.value) {
+                    phaseIndex++
+                } else if (nextPhaseTrigger.type === 'velocity' && vel < nextPhaseTrigger.value) {
+                    phaseIndex++
+                } else if (nextPhaseTrigger.type === 'key') {
+                    let elapsed = clock.elapsedTime
+                    if (elapsed !== 0) lastRecordedElapsedTime += elapsed
+                    isPaused = true
+                    if (keysDown[nextPhaseTrigger.value]) {
+                        phaseIndex++
+                        isPaused = false
+                    }
+                }
+
+                //calc progress to next trigger
+                if (nextPhaseTrigger.type === 'altitude') {
+                    progress = nextPhaseTrigger.value / alt
+                } else if (nextPhaseTrigger.type === 'velocity') {
+                    progress =  nextPhaseTrigger.value / vel
+                } else if (nextPhaseTrigger.type === 'key') {
+                    progress = keysDown[nextPhaseTrigger.value] ? 1 : 0
+                }
+
+                setNextPhaseUI(nextPhase)
             }
 
             //throttle
@@ -238,13 +240,16 @@ const Game = () => {
             setVelocity(vel)
             setAcceleration(acc)
             setTimeElapsed(clock.elapsedTime + lastRecordedElapsedTime)
-            setNextPhaseUI(nextPhase)
             document.querySelector('.phase').innerHTML = sequence[phaseIndex].name
             document.querySelector('.guidence > .text').innerHTML = sequence[phaseIndex].description[autonomyLevel]
             document.querySelector('.progress-bar').style.transform = `scaleX(${progress})`
+
+            if (alt < 1) {
+                isPaused = true
+            }
             
             //animation loop
-            requestAnimationFrame(alt>0 ? animate : animate)
+            requestAnimationFrame(animate)
             renderer.render(scene, camera)
         }
 
