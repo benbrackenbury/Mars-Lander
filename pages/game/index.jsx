@@ -17,9 +17,9 @@ const Game = () => {
     //read global states
     const { 
         selectedProfile: profile,
-        autonomyLevel,
+        autonomyLevel, setAutonomyLevel,
         antialias,
-        pausing
+        pausing, setPausing
     } = useContext(AppContext)
 
     const [sequence, setSequence] = useState([])
@@ -32,7 +32,7 @@ const Game = () => {
     let phaseIndex = 0
 
     const setup = async () => {
-        const scene = new THREE.Scene()
+        const mainScene = new THREE.Scene()
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000000000)
 
         const renderer = new THREE.WebGLRenderer({ antialias })
@@ -40,7 +40,7 @@ const Game = () => {
         document.querySelectorAll('canvas').forEach(canvas => canvas.remove())
         document.querySelector('.Game').appendChild(renderer.domElement)
 
-        scene.add(mars)
+        mainScene.add(mars)
         const STARTING_ALTITUDE = 131000
         mars.position.set(0, 0, -(MARS_RADIUS + STARTING_ALTITUDE))
         camera.position.set(0, 0, 20)
@@ -58,7 +58,7 @@ const Game = () => {
         //spacecraft
         let loader = new GLTFLoader()
         let spacecraft = await (await loader.loadAsync('/assets/models/msl-aeroshell.gltf')).scene.children[0]
-        scene.add(spacecraft)
+        mainScene.add(spacecraft)
         spacecraft.material = new THREE.MeshPhongMaterial({
             color: 0xffffff
         })
@@ -66,11 +66,11 @@ const Game = () => {
         //directional light for spacecraft
         let light = new THREE.DirectionalLight(0xffffff)
         light.position.set(1, 1, 10).normalize()
-        scene.add(light)
+        mainScene.add(light)
 
         // ambient light
         const ambientlight = new THREE.AmbientLight(0xffffff, 0.1)
-        scene.add(ambientlight)
+        mainScene.add(ambientlight)
 
         //stars
         const starGeometry = new THREE.BufferGeometry()
@@ -116,6 +116,9 @@ const Game = () => {
         document.addEventListener('keyup', e => {
             keysDown[e.key] = false
         })
+
+        let scene = mainScene
+        let hasSwitchedToLandingScene = false
         
         let animationFrameID
         const animate = () => {
@@ -219,8 +222,13 @@ const Game = () => {
                 setNextPhaseUI(nextPhase)
             }
 
-            //throttle
+            //landing
             if (sequence[phaseIndex].key === 'landing') {
+
+                //landing grahics changes
+                
+
+                //show telemetry and handle throttle
                 document.querySelector('.landing-telemetry').classList.remove('hidden')
                 if (fuelRemaining > 0) {
                     if (keysDown['Shift']) {
@@ -255,8 +263,10 @@ const Game = () => {
             setAcceleration(acc)
             setTimeElapsed(clock.elapsedTime + lastRecordedElapsedTime)
             document.querySelector('.phase').innerHTML = sequence[phaseIndex].name
-            document.querySelector('.guidence > .text').innerHTML = sequence[phaseIndex].description[autonomyLevel]
-            document.querySelector('.progress-bar').style.transform = `scaleX(${progress})`
+            if (autonomyLevel !== 'none') {
+                document.querySelector('.guidence > .text').innerHTML = sequence[phaseIndex].description[autonomyLevel]
+                document.querySelector('.progress-bar').style.transform = `scaleX(${progress})`
+            }
 
             if (alt < 1) {
                 isPaused = true
@@ -285,7 +295,13 @@ const Game = () => {
             return profile.sequence[phase]
         }))
 
-        // setup()
+        // translate old autonomy system to new difficulty system
+        if (autonomyLevel === 'full') {
+            setAutonomyLevel('guided')
+            setPausing(true)
+        } else if (autonomyLevel === 'guided') {
+            setPausing(false)
+        }
     }, [])
 
     useEffect(() => {
@@ -324,9 +340,13 @@ const Game = () => {
                 <p className="description">{profile.description}</p>
                 {nextPhaseUI && (
                     <div className="upnext">
-                        <p>Up Next</p>
-                        <p>{nextPhaseUI.name}</p>
-                        {nextPhaseUI.trigger.guided && autonomyLevel==='guided' ? (
+                        {autonomyLevel!=='none' && (
+                            <>
+                                <p>Up Next</p>
+                                <p>{nextPhaseUI.name}</p>
+                            </>
+                        )}
+                        {nextPhaseUI.trigger.guided && autonomyLevel!=='none' ? (
                             <p>Awaiting input</p>
                         ) : (
                             <p>when {nextPhaseUI.trigger.full.type} = {nextPhaseUI.trigger.full.value}</p>

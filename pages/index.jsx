@@ -6,7 +6,7 @@ import AppContext from '../context'
 const MenuScreen = () => {
 
   const [profiles, setProfiles] = useState([])
-  const [spacecraftType, setSpacecraftType] = useState("nasa-mer")
+  const [spacecraftType, setSpacecraftType] = useState("nasa-msl")
 
   //read global states
   const { 
@@ -47,11 +47,11 @@ const MenuScreen = () => {
               })}
             </select>
 
-            <label htmlFor="autonomy">Autonomy level</label>
+            <label htmlFor="autonomy">Difficulty</label>
             <select name="autonomy" id="autonomy" value={autonomyLevel} onChange={e => setAutonomyLevel(e.target.value)}>
-              <option value="full">Full</option>
-              <option value="guided">Guided</option>
-              <option value="none">None</option>
+              <option value="full">Easy</option>
+              <option value="guided">Medium</option>
+              <option value="none">Hard</option>
             </select>
 
             <div id="antialiasing">
@@ -59,12 +59,12 @@ const MenuScreen = () => {
               <label htmlFor="antialias"> Enable antialiasing (may affect performance)</label>
             </div>
 
-            {autonomyLevel==='guided' && (
+            {/* {autonomyLevel==='guided' && (
               <div id="pausing">
                 <input type="checkbox" name="pausing" id="pausing" checked={pausing} onChange={e => setPausing(e.target.checked)}/>
                 <label htmlFor="pausing"> Pause for player input</label>
               </div>
-            )}
+            )} */}
 
           </form>
 
