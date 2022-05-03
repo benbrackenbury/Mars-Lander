@@ -41,7 +41,8 @@ const Game = () => {
         document.querySelector('.Game').appendChild(renderer.domElement)
 
         scene.add(mars)
-        mars.position.set(0, 0, -(MARS_RADIUS + 250000))
+        const STARTING_ALTITUDE = 131000
+        mars.position.set(0, 0, -(MARS_RADIUS + STARTING_ALTITUDE))
         camera.position.set(0, 0, 20)
 
         //atmosphere
@@ -127,7 +128,8 @@ const Game = () => {
                 if (sequence[phaseIndex].key === 'pre-entry' ||
                     sequence[phaseIndex].key === 'entry' ||
                     sequence[phaseIndex].key === 'aeroshell-jettison' ||
-                    sequence[phaseIndex].key === 'descent-pre-parachute'
+                    sequence[phaseIndex].key === 'descent-pre-parachute' ||
+                    sequence[phaseIndex].key === 'parachute-deploy'
                 ) {
                     mars.position.z += Math.sin(toRadians(angleOfAttack)) * vel * deltaTime
                     mars.rotation.y -= 0.000001 * Math.cos(toRadians(angleOfAttack)) * vel * deltaTime
@@ -155,19 +157,31 @@ const Game = () => {
             let alt = spacecraft.position.z - (mars.position.z + MARS_RADIUS)
 
             //drag & acceleration
+            let density, dragNewtons, dragAcc
             switch (sequence[phaseIndex].key) {
                 case 'entry':
-                    let density = 0.02 * Math.exp(-alt/11100)
-                    let dragNewtons = 0.5 * density * Math.pow(vel, 2) * profile.crossSectionArea
-                    let dragAcc = dragNewtons / mass
+                case 'descent-pre-parachute':
+                case 'parachute-deploy':
+                    density = 0.02 * Math.exp(-alt/11100)
+                    dragNewtons = 0.5 * density * Math.pow(vel, 2) * profile.crossSectionArea
+                    dragAcc = dragNewtons / mass
                     acc = GRAVITY - dragAcc
                     spacecraft.material.color = new THREE.Color(0xffaaaa)
                     break
-                case 'descent-post-parachute':
-                    acc = -36 / mass
+                case 'descent-pre-parachute':
+                    density = 0.02 * Math.exp(-alt/11100)
+                    dragNewtons = 0.5 * density * Math.pow(vel, 2) * profile.crossSectionArea
+                    dragAcc = dragNewtons / (mass * 2)
+                    acc = GRAVITY - dragAcc
+                    spacecraft.material.color = new THREE.Color(0xffffff)
+                    break
+                case 'descent-parachute':
+                    acc = profile.parachuteDeceleration
+                    spacecraft.material.color = new THREE.Color(0xffffff)
                     break
                 case 'landing':
-                    acc = GRAVITY - (throttle * 2 * GRAVITY)
+                    acc = GRAVITY - (throttle * 1.5 * GRAVITY)
+                    spacecraft.material.color = new THREE.Color(0xffffff)
                     break
                 default:
                     acc = GRAVITY

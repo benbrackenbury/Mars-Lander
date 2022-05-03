@@ -3,54 +3,59 @@
     "description": "NASA Mars Exploration Rover",
     "mass": 185,
     "crossSectionArea": 5.5,
+    "parachuteDeceleration": -0.0258,
     "sequence": {
-      "preEntry": {
-        "key": "pre-entry",
-        "name": "Awaiting Entry",
-        "description": {
-          "full": "The spacecraft is awaiting entry into the Martian atmosphere.",
-          "guided": "The spacecraft is awaiting entry into the Martian atmosphere."
-        }
-      },
+      
       "entry": {
         "key": "entry",
         "name": "Entry",
         "description": {
           "full": "The spacecraft has hit the upper atmosphere. As the air infront of the craft is compressed, kinetic energy is transferred into thermal, slowing down the spacecraft and causing it to heat up.",
           "guided": "The spacecraft has hit the upper atmosphere. As the air infront of the craft is compressed, kinetic energy is transferred into thermal, slowing down the spacecraft and causing it to heat up."
-        },
-        "trigger": {
-          "full": {
-            "type": "altitude",
-            "value": 150000
-          }
         }
       },
+
       "descentPreParachute": {
         "key": "descent-pre-parachute",
         "name": "Descent (free fall)",
         "description": {
-          "full": "The spacecraft now needs to further slow down, the parachute will deploy shortly to further decelerate the vehicle.",
-          "guided": "The spacecraft now needs to further slow down, press SPACE to deploy the parachute."
+          "full": "The spacecraft will soon need to deploy its parachute, but it is currently too high.",
+          "guided": "The spacecraft will soon need to deploy its parachute, but it is currently too high."
         },
         "trigger": {
           "full": {
             "type": "velocity",
-            "value": 330
+            "value": 477
           }
         }
       },
-      "descentParachute": {
-        "key": "descent-post-parachute",
-        "name": "Descent under parachute",
+
+      "parachuteDeploy": {
+        "key": "parachute-deploy",
+        "name": "Parachute Deploy",
         "description": {
-          "full": "This spacecraft is too heavy to land gently under parachutes, a propulsive landing is required.",
-          "guided": "This spacecraft is too heavy to land gently under parachutes, press X to cut parachutes and begin propsulvie landing."
+          "full": "The atmosphere is now thin enough to deploy the parachute.",
+          "guided": "The atmosphere is now thin enough to deploy the parachute. Press SPACE to deploy."
         },
         "trigger": {
           "full": {
             "type": "altitude",
-            "value": 1300
+            "value": 11940
+          }
+        }
+      },
+
+      "descentParachute": {
+        "key": "descent-parachute",
+        "name": "Descent under parachute",
+        "description": {
+          "full": "The spacecraft is being slowed down by the parachute.",
+          "guided": "The spacecraft is being slowed down by the parachute."
+        },
+        "trigger": {
+          "full": {
+            "type": "velocity",
+            "value": 81
           },
           "guided": {
             "type": "key",
@@ -58,24 +63,40 @@
           }
         }
       },
-      "landing": {
-        "key": "landing",
-        "name": "Landing",
+
+      "airbagInflation": {
+        "key": "airbag-inflation",
+        "name": "Airbag Inflation",
         "description": {
-          "full": "The spacecraft is brought to the surface gently using a controlled propulsive landing.",
-          "guided": "Press SHIFT to increase throttle and CONTROL to decrease throttle. Press E to equalise thrust-to-weight. Hold C to see alternate camera view."
+          "full": "The spacecraft needs to inflate its large airbag to land softly on the Martian surface.",
+          "guided": "The spacecraft needs to inflate its large airbag to land softly on the Martian surface. Press SPACE to inflate it."
         },
         "trigger": {
           "full": {
             "type": "altitude",
-            "value": 1200
-          },
-          "guided": {
-            "type": "key",
-            "value": "x"
+            "value": 100
           }
         }
       },
+
+      "airbagFinalDescent": {
+        "key": "final-descent",
+        "name": "Final Descent",
+        "description": {
+          "full": "The spacecarft is about to touch down on the surface of Mars.",
+          "guided": "The spacecarft is about to touch down on the surface of Mars."
+        },
+        "trigger": {
+          "full": {
+            "type": "altitude",
+            "value": 100
+          },
+          "guided": {
+            "type": "key",
+            "value": " "
+        }
+      },
+
       "touchdown": {
         "key": "touchdown",
         "name": "Touchdown",
@@ -87,8 +108,9 @@
           "full": {
             "type": "altitude",
             "value": 0
-          }
+          },
         }
       }
+
     }
   }

@@ -4,73 +4,59 @@
     "image": "https://mars.nasa.gov/layout/mars2020/images/LearnAboutTheRover_Perseverance_QuickFacts_mobile.png",
     "mass": 900,
     "crossSectionArea": 15.9,
+    "parachuteDeceleration": -0.04,
     "sequence": {
-      "preEntry": {
-        "key": "pre-entry",
-        "name": "Awaiting Entry",
-        "description": {
-          "full": "The spacecraft is awaiting entry into the Martian atmosphere.",
-          "guided": "The spacecraft is awaiting entry into the Martian atmosphere."
-        }
-      },
+      
       "entry": {
         "key": "entry",
         "name": "Entry",
         "description": {
           "full": "The spacecraft has hit the upper atmosphere. As the air infront of the craft is compressed, kinetic energy is transferred into thermal, slowing down the spacecraft and causing it to heat up.",
           "guided": "The spacecraft has hit the upper atmosphere. As the air infront of the craft is compressed, kinetic energy is transferred into thermal, slowing down the spacecraft and causing it to heat up."
-        },
-        "trigger": {
-          "full": {
-            "type": "altitude",
-            "value": 150000
-          }
         }
       },
 
-      "aeorshellJettison": {
-        "key": "aeroshell-jettison",
-        "name": "Aeroshell Jettison",
-        "description": {
-          "full": "The protective aeroshell is no longer needed, so is jettisonned.",
-          "guided": "The protective aeroshell is no longer needed, press SPACE to jettison."
-        },
-        "trigger": {
-          "full": {
-            "type": "velocity",
-            "value": 330
-          }
-        }
-      },
       "descentPreParachute": {
         "key": "descent-pre-parachute",
         "name": "Descent (free fall)",
         "description": {
-          "full": "The spacecraft now needs to further slow down, the parachute will deploy shortly to further decelerate the vehicle.",
-          "guided": "The spacecraft now needs to further slow down, press SPACE to deploy the parachute."
+          "full": "The spacecraft will soon need to deploy its parachute, but it is currently too high.",
+          "guided": "The spacecraft will soon need to deploy its parachute, but it is currently too high."
         },
         "trigger": {
           "full": {
             "type": "velocity",
-            "value": 300
-          },
-          "guided": {
-            "type": "key",
-            "value": " "
+            "value": 477
           }
         }
       },
-      "descentParachute": {
-        "key": "descent-post-parachute",
-        "name": "Descent under parachute",
+
+      "parachuteDeploy": {
+        "key": "parachute-deploy",
+        "name": "Parachute Deploy",
         "description": {
-          "full": "This spacecraft is too heavy to land gently under parachutes, a propulsive landing is required.",
-          "guided": "This spacecraft is too heavy to land gently under parachutes, press X to cut parachutes and begin propsulvie landing."
+          "full": "The atmosphere is now thin enough to deploy the parachute.",
+          "guided": "The atmosphere is now thin enough to deploy the parachute. Press SPACE to deploy."
         },
         "trigger": {
           "full": {
             "type": "altitude",
-            "value": 1300
+            "value": 11940
+          }
+        }
+      },
+
+      "descentParachute": {
+        "key": "descent-parachute",
+        "name": "Descent under parachute",
+        "description": {
+          "full": "The spacecraft is being slowed down by the parachute.",
+          "guided": "The spacecraft is being slowed down by the parachute."
+        },
+        "trigger": {
+          "full": {
+            "type": "velocity",
+            "value": 81
           },
           "guided": {
             "type": "key",
@@ -78,6 +64,22 @@
           }
         }
       },
+
+      "backshellSeparation": {
+        "key": "backshell-separation",
+        "name": "Backshell Separation",
+        "description": {
+          "full": "The spaceacraft now is still travelling too fast to softly touch down, so will separate from the backshell and parachute.",
+          "guided": "The spaceacraft now is still travelling too fast to softly touch down. Press X to separate the spacecraft from the backshell and parachute."
+        },
+        "trigger": {
+          "full": {
+            "type": "altitude",
+            "value": 2180
+          }
+        }
+      },
+
       "landing": {
         "key": "landing",
         "name": "Landing",
@@ -96,6 +98,7 @@
           }
         }
       },
+
       "touchdown": {
         "key": "touchdown",
         "name": "Touchdown",
@@ -110,5 +113,6 @@
           }
         }
       }
+
     }
   }

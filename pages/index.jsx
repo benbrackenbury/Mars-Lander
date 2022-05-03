@@ -6,7 +6,7 @@ import AppContext from '../context'
 const MenuScreen = () => {
 
   const [profiles, setProfiles] = useState([])
-  const [spacecraftType, setSpacecraftType] = useState("nasa-msl")
+  const [spacecraftType, setSpacecraftType] = useState("nasa-mer")
 
   //read global states
   const { 
