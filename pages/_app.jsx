@@ -9,12 +9,14 @@ export default ({ Component, pageProps }) => {
   const [selectedProfile, setSelectedProfile] = useState(null)
   const [autonomyLevel, setAutonomyLevel] = useState("guided")
   const [antialias, setAntialias] = useState(true)
+  const [pausing, setPausing] = useState(true)
 
   //states to pass to all components
   const allProps = {
       selectedProfile, setSelectedProfile,
       autonomyLevel, setAutonomyLevel,
-      antialias, setAntialias
+      antialias, setAntialias,
+      pausing, setPausing,
   }
 
   return (

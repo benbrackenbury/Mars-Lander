@@ -18,7 +18,8 @@ const Game = () => {
     const { 
         selectedProfile: profile,
         autonomyLevel,
-        antialias
+        antialias,
+        pausing
     } = useContext(AppContext)
 
     const [sequence, setSequence] = useState([])
@@ -51,7 +52,7 @@ const Game = () => {
             transparent: true
         })
         const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial)
-        // mars.add(atmosphere)
+        mars.add(atmosphere)
 
         //spacecraft
         let loader = new GLTFLoader()
@@ -115,9 +116,9 @@ const Game = () => {
             keysDown[e.key] = false
         })
         
+        let animationFrameID
         const animate = () => {
             let deltaTime = clock.getDelta()
-
             if (!isPaused) {
                 clock.running = true
                 //increase or decrease velocity
@@ -184,8 +185,8 @@ const Game = () => {
                     phaseIndex++
                 } else if (nextPhaseTrigger.type === 'key') {
                     let elapsed = clock.elapsedTime
-                    if (elapsed !== 0) lastRecordedElapsedTime += elapsed
-                    isPaused = true
+                    if (elapsed !== 0 && pausing) lastRecordedElapsedTime += elapsed
+                    isPaused = pausing ? true : false
                     if (keysDown[nextPhaseTrigger.value]) {
                         phaseIndex++
                         isPaused = false
@@ -248,7 +249,7 @@ const Game = () => {
             }
             
             //animation loop
-            requestAnimationFrame(animate)
+            animationFrameID = requestAnimationFrame(animate)
             renderer.render(scene, camera)
         }
 

@@ -12,7 +12,8 @@ const MenuScreen = () => {
   const { 
     selectedProfile, setSelectedProfile,
     autonomyLevel, setAutonomyLevel,
-    antialias, setAntialias
+    antialias, setAntialias,
+    pausing, setPausing,
   } = useContext(AppContext)
 
   //fetch all profiles
@@ -57,6 +58,13 @@ const MenuScreen = () => {
               <input type="checkbox" name="antialias" id="antialias" checked={antialias} onChange={e => setAntialias(e.target.checked)}/>
               <label htmlFor="antialias"> Enable antialiasing (may affect performance)</label>
             </div>
+
+            {autonomyLevel==='guided' && (
+              <div id="pausing">
+                <input type="checkbox" name="pausing" id="pausing" checked={pausing} onChange={e => setPausing(e.target.checked)}/>
+                <label htmlFor="pausing"> Pause for player input</label>
+              </div>
+            )}
 
           </form>
 
