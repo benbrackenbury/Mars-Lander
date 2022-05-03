@@ -94,6 +94,7 @@
           "guided": {
             "type": "key",
             "value": " "
+          }
         }
       },
 
@@ -108,7 +109,7 @@
           "full": {
             "type": "altitude",
             "value": 0
-          },
+          }
         }
       }
 
