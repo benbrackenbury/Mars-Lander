@@ -43,6 +43,7 @@
             align-items: center;
             margin-bottom: 1.5rem;
             margin-top: 0.5rem;
+            transform: rotate(180deg);
 
             .throttle-bar,
             .fuel-bar {
@@ -50,6 +51,26 @@
                 background: white;
                 border: none;
                 border-radius: 2rem;
+            }
+        }
+
+        .altitude-guage {
+            width: 5em;
+            height: clamp(3em, 50vh , 50em);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 2rem;
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 1.5rem;
+            margin-top: 0.5rem;
+
+            .altitude-bar{
+                max-height: 100%;
+                width: 100%;
+                background: white;
+                border: none;
+                border-radius: 0 0 2rem 2rem;
             }
         }
     }

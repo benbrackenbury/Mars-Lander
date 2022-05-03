@@ -118,7 +118,6 @@ const Game = () => {
         })
 
         let scene = mainScene
-        let hasSwitchedToLandingScene = false
         
         let animationFrameID
         const animate = () => {
@@ -224,10 +223,6 @@ const Game = () => {
 
             //landing
             if (sequence[phaseIndex].key === 'landing') {
-
-                //landing grahics changes
-                
-
                 //show telemetry and handle throttle
                 document.querySelector('.landing-telemetry').classList.remove('hidden')
                 if (fuelRemaining > 0) {
@@ -255,6 +250,12 @@ const Game = () => {
                 exhaust.scale.set(1, -throttle, 1)
                 document.querySelector('#throttle-label').innerHTML = `Throttle: ${Math.floor(throttle * 100)}%`
                 document.querySelector('#fuel-label').innerHTML = `Fuel Remaining: ${Math.floor(fuelRemaining)}%`
+
+                document.querySelector('.throttle-bar').style.width = `${throttle * 100}%`
+                document.querySelector('.fuel-bar').style.width = `${Math.floor(fuelRemaining)}%`
+                document.querySelector('.fuel-bar').style.backgroundColor = `${fuelRemaining > 50 ? 'green' : (fuelRemaining > 20 ? 'orange' : 'red')}`
+                document.querySelector('.altitude-bar').style.height = `${100 - Math.floor(100*(alt / sequence[phaseIndex].trigger.full.value))}%`
+
             }
 
             //update UI
@@ -331,6 +332,12 @@ const Game = () => {
                     <p id="fuel-label">Fuel: 100%</p>
                     <div className="fuel-guage">
                         <div className="fuel-bar"></div>
+                    </div>
+
+                    <br />
+
+                    <div className="altitude-guage">
+                        <div className="altitude-bar"></div>
                     </div>
                 </div>
 
