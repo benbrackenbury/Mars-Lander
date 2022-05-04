@@ -7,7 +7,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import AppContext from '../../context'
 import mars, { MARS_RADIUS, GRAVITY } from '../../three/objects/mars'
 import exhaust from '../../three/objects/exhaust'
-import { initialVelocity } from '../../three/objects/spacecraft'
 
 const toRadians = degrees => degrees * (Math.PI / 180)
 
@@ -114,7 +113,8 @@ const Game = () => {
 
         const clock = new THREE.Clock()
 
-        let vel = initialVelocity
+        //starting values
+        let vel = 5588
         let acc = GRAVITY
         let angleOfAttack = 68
         let throttle = 0
@@ -123,6 +123,7 @@ const Game = () => {
         let isPaused = false
         let lastRecordedElapsedTime = 0
         let parachuteDeployIndex
+        let animationFrameID
 
         spacecraft.scale.set(2, 2, 2)
 
@@ -319,11 +320,12 @@ const Game = () => {
                 isPaused = true
                 setTimeout(() => {
                     router.replace(`/game/end?success=${success}&velocity=${Math.floor(vel)}`)
+                    cancelAnimationFrame(animationFrameID)
                 }, 3000)
             }
             
             //animation loop
-            requestAnimationFrame(animate)
+            animationFrameID = requestAnimationFrame(animate)
             renderer.render(scene, camera)
         }
 
