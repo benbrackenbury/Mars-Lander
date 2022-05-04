@@ -122,6 +122,7 @@ const Game = () => {
         let mass = profile.mass
         let isPaused = false
         let lastRecordedElapsedTime = 0
+        let parachuteDeployIndex
 
         spacecraft.scale.set(2, 2, 2)
 
@@ -170,13 +171,28 @@ const Game = () => {
                 document.querySelector('.sc-info').classList.add('paused')
             }
 
-            //parachute
+            //check for chute deploy and jesttison heat shield
+            //check index of parachute deploy phase
+            if (sequence[phaseIndex].key === 'chuteDeploy') {
+                parachuteDeployIndex = phaseIndex
+            }
+            //if parachute has been deployed
+            if (phaseIndex === parachuteDeployIndex + 1) {
+                heatshield.visible = false
+            }
+
+            //parachute visibility
             parachute.visible = 
                 sequence[phaseIndex].key === 'descent-parachute' || sequence[phaseIndex].key === 'backshell-separation'
 
-            //airbag
+            //airbag visibility
             airbag.visible = 
                 sequence[phaseIndex].key === 'final-decent'
+
+            //aeroshell visibility
+            aeroshell.visible = 
+                sequence[phaseIndex].key !== 'landing' ||
+                (sequence[phaseIndex].key !== 'touchdown' && profile.name==="Nasa MSL")
 
             //spacecraft color
             aeroshell.material.color = new THREE.Color(sequence[phaseIndex].key === 'entry' ? 0xffaaaa : 0xffffff)
