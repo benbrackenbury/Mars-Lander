@@ -31,18 +31,20 @@ const Game = () => {
     let phaseIndex = 0
 
     const setup = async () => {
-        const mainScene = new THREE.Scene()
+        //set up camera and scene
+        const scene = new THREE.Scene()
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000000000)
 
+        //set up renderer
         const renderer = new THREE.WebGLRenderer({ antialias })
         renderer.setSize(window.innerWidth, window.innerHeight)
         document.querySelectorAll('canvas').forEach(canvas => canvas.remove())
         document.querySelector('.Game').appendChild(renderer.domElement)
 
-        mainScene.add(mars)
+        //set up mars
+        scene.add(mars)
         const STARTING_ALTITUDE = 131000
         mars.position.set(0, 0, -(MARS_RADIUS + STARTING_ALTITUDE))
-        camera.position.set(0, 0, 20)
 
         //atmosphere
         const atmosphereGeometry = new THREE.SphereGeometry(3389500+150000, 100, 100)
@@ -56,7 +58,7 @@ const Game = () => {
 
         //spacecraft
         let spacecraft = new THREE.Group()
-        mainScene.add(spacecraft)
+        scene.add(spacecraft)
         let loader = new GLTFLoader()
         let aeroshell = await (await loader.loadAsync('/assets/models/aeroshell.gltf')).scene.children[0]
         spacecraft.add(aeroshell)
@@ -93,29 +95,35 @@ const Game = () => {
             model.position.z = 0.5
             model.position.y = -0.4
         }
+        //exhaust
+        spacecraft.add(exhaust)
+        exhaust.scale.set(0, 0, 0)
+        //scale
+        spacecraft.scale.set(2, 2, 2)
 
         //directional light for spacecraft
         let light = new THREE.DirectionalLight(0xffffff)
         light.position.set(1, 1, 10).normalize()
-        mainScene.add(light)
+        scene.add(light)
 
         // ambient light
         const ambientlight = new THREE.AmbientLight(0xffffff, 0.1)
-        mainScene.add(ambientlight)
+        scene.add(ambientlight)
 
-        spacecraft.add(exhaust)
-        exhaust.scale.set(0, 0, 0)
+        //set camera positiom
+        camera.position.set(0, 0, 20)
         
         //orbit controls
         const controls = new OrbitControls(camera, renderer.domElement)
         controls.target.set(spacecraft.position.x, spacecraft.position.y, spacecraft.position.z)
         controls.update()
 
+        //create clock object
         const clock = new THREE.Clock()
 
         //starting values
-        let vel = 5588
-        let acc = GRAVITY
+        let velocityProxy = 5588
+        let accelerationProxy = GRAVITY
         let angleOfAttack = 68
         let throttle = 0
         let fuelRemaining = 100
@@ -124,10 +132,8 @@ const Game = () => {
         let lastRecordedElapsedTime = 0
         let parachuteDeployIndex
         let animationFrameID
-        let hasMovedToEndScreen = false
 
-        spacecraft.scale.set(2, 2, 2)
-
+        //keep track of key presses
         let keysDown = {}
         document.addEventListener('keydown', e => {
             keysDown[e.key] = true
@@ -135,15 +141,15 @@ const Game = () => {
         document.addEventListener('keyup', e => {
             keysDown[e.key] = false
         })
-
-        let scene = mainScene
         
         const animate = () => {
             let deltaTime = clock.getDelta()
+
+            //move mars towards spacecraft if not paused
             if (!isPaused) {
                 clock.running = true
                 //increase or decrease velocity
-                vel += acc
+                velocityProxy += accelerationProxy
                 //angle of attack and velocity
                 if (sequence[phaseIndex].key === 'pre-entry' ||
                     sequence[phaseIndex].key === 'entry' ||
@@ -151,13 +157,13 @@ const Game = () => {
                     sequence[phaseIndex].key === 'descent-pre-parachute' ||
                     sequence[phaseIndex].key === 'parachute-deploy'
                 ) {
-                    mars.position.z += Math.sin(toRadians(angleOfAttack)) * vel * deltaTime
-                    mars.rotation.y -= 0.000001 * Math.cos(toRadians(angleOfAttack)) * vel * deltaTime
+                    mars.position.z += Math.sin(toRadians(angleOfAttack)) * velocityProxy * deltaTime
+                    mars.rotation.y -= 0.000001 * Math.cos(toRadians(angleOfAttack)) * velocityProxy * deltaTime
                     spacecraft.rotation.x = toRadians(90)
                     spacecraft.rotation.y = toRadians(0)
                     spacecraft.rotation.z = toRadians(angleOfAttack)
                 } else {
-                    mars.position.z += vel * deltaTime
+                    mars.position.z += velocityProxy * deltaTime
                     spacecraft.rotation.x = toRadians(90)
                     spacecraft.rotation.y = toRadians(0)
                     spacecraft.rotation.z = toRadians(0)
@@ -166,7 +172,7 @@ const Game = () => {
                 document.querySelector('.telemetry').classList.remove('paused')
                 document.querySelector('.sc-info').classList.remove('paused')
             } else {
-
+                //stop clock and grey out telemetry if paused
                 clock.running = false
                 //fade out UI if paused
                 document.querySelector('.telemetry').classList.add('paused')
@@ -201,7 +207,7 @@ const Game = () => {
             heatshield.material.color = new THREE.Color(sequence[phaseIndex].key === 'entry' ? 0x751f00 : 0xaaaaaa)
 
             //calculate altitude
-            let alt = spacecraft.position.z - (mars.position.z + MARS_RADIUS)
+            let altitudeProxy = spacecraft.position.z - (mars.position.z + MARS_RADIUS)
 
             //drag & acceleration
             let density, dragNewtons, dragAcc
@@ -209,25 +215,25 @@ const Game = () => {
                 case 'entry':
                 case 'descent-pre-parachute':
                 case 'parachute-deploy':
-                    density = 0.02 * Math.exp(-alt/11100)
-                    dragNewtons = 0.5 * density * Math.pow(vel, 2) * profile.crossSectionArea
+                    density = 0.02 * Math.exp(-altitudeProxy/11100)
+                    dragNewtons = 0.5 * density * Math.pow(velocityProxy, 2) * profile.crossSectionArea
                     dragAcc = dragNewtons / mass
-                    acc = GRAVITY - dragAcc
+                    accelerationProxy = GRAVITY - dragAcc
                     break
                 case 'descent-pre-parachute':
-                    density = 0.02 * Math.exp(-alt/11100)
-                    dragNewtons = 0.5 * density * Math.pow(vel, 2) * profile.crossSectionArea
+                    density = 0.02 * Math.exp(-altitudeProxy/11100)
+                    dragNewtons = 0.5 * density * Math.pow(velocityProxy, 2) * profile.crossSectionArea
                     dragAcc = dragNewtons / (mass * 2)
-                    acc = GRAVITY - dragAcc
+                    accelerationProxy = GRAVITY - dragAcc
                     break
                 case 'descent-parachute':
-                    acc = profile.parachuteDeceleration
+                    accelerationProxy = profile.parachuteDeceleration
                     break
                 case 'landing':
-                    acc = GRAVITY - (throttle * 1.5 * GRAVITY)
+                    accelerationProxy = GRAVITY - (throttle * 1.5 * GRAVITY)
                     break
                 default:
-                    acc = GRAVITY
+                    accelerationProxy = GRAVITY
             }
 
             //next phase stuff
@@ -235,9 +241,9 @@ const Game = () => {
             let progress = 0
             if (nextPhase !== undefined) {
                 let nextPhaseTrigger = nextPhase.trigger[autonomyLevel] ?? nextPhase.trigger.full
-                if (nextPhaseTrigger.type === 'altitude' && alt < nextPhaseTrigger.value) {
+                if (nextPhaseTrigger.type === 'altitude' && altitudeProxy < nextPhaseTrigger.value) {
                     phaseIndex++
-                } else if (nextPhaseTrigger.type === 'velocity' && vel < nextPhaseTrigger.value) {
+                } else if (nextPhaseTrigger.type === 'velocity' && velocityProxy < nextPhaseTrigger.value) {
                     phaseIndex++
                 } else if (nextPhaseTrigger.type === 'key') {
                     let elapsed = clock.elapsedTime
@@ -251,9 +257,9 @@ const Game = () => {
 
                 //calc progress to next trigger
                 if (nextPhaseTrigger.type === 'altitude') {
-                    progress = nextPhaseTrigger.value / alt
+                    progress = nextPhaseTrigger.value / altitudeProxy
                 } else if (nextPhaseTrigger.type === 'velocity') {
-                    progress =  nextPhaseTrigger.value / vel
+                    progress =  nextPhaseTrigger.value / velocityProxy
                 } else if (nextPhaseTrigger.type === 'key') {
                     progress = keysDown[nextPhaseTrigger.value] ? 1 : 0
                 }
@@ -261,7 +267,7 @@ const Game = () => {
                 setNextPhaseUI(nextPhase)
             }
 
-            //landing
+            //landing: handle throttle and exahust graphics
             if (sequence[phaseIndex].key === 'landing') {
                 //show telemetry and handle throttle
                 document.querySelector('.landing-telemetry').classList.remove('hidden')
@@ -294,14 +300,14 @@ const Game = () => {
                 document.querySelector('.throttle-bar').style.width = `${throttle * 100}%`
                 document.querySelector('.fuel-bar').style.width = `${Math.floor(fuelRemaining)}%`
                 document.querySelector('.fuel-bar').style.backgroundColor = `${fuelRemaining > 50 ? 'green' : (fuelRemaining > 20 ? 'orange' : 'red')}`
-                document.querySelector('.altitude-bar').style.height = `${100 - Math.floor(100*(alt / sequence[phaseIndex].trigger.full.value))}%`
+                document.querySelector('.altitude-bar').style.height = `${100 - Math.floor(100*(altitudeProxy / sequence[phaseIndex].trigger.full.value))}%`
 
             }
 
             //update UI
-            setAltitude(alt)
-            setVelocity(vel)
-            setAcceleration(acc)
+            setAltitude(altitudeProxy)
+            setVelocity(velocityProxy)
+            setAcceleration(accelerationProxy)
             setTimeElapsed(clock.elapsedTime + lastRecordedElapsedTime)
             document.querySelector('.phase').innerHTML = sequence[phaseIndex].name
             if (autonomyLevel !== 'none') {
@@ -309,21 +315,23 @@ const Game = () => {
                 document.querySelector('.progress-bar').style.transform = `scaleX(${progress})`
             }
 
-            if (alt <= 0 ) {
+            //handle landing or crash
+            if (altitudeProxy <= 0 ) {
                 hasMovedToEndScreen = true
                 let success = true
-                if (vel > 10) {
+                if (velocityProxy > 10) {
                     success = false
                     if (autonomyLevel !== 'none') {
                         document.querySelector('.guidence > .text').innerHTML 
-                            = `Unfortunatley the spacecraft has crashed at a velocity of ${Math.floor(vel)} m/s.`
+                            = `Unfortunatley the spacecraft has crashed at a velocity of ${Math.floor(velocityProxy)} m/s.`
                     }
                 }
                 isPaused = true
                 setTimeout(() => {
                     console.log('END')
                     // router.replace(`/game/end?success=${success}&velocity=${Math.floor(vel)}`)
-                    window.location = `/game/end?success=${success}&velocity=${Math.floor(vel)}`
+                    window.location = `/game/end?success=${success}&velocity=${Math.floor(velocityProxy)}`
+                    //make sure there is no way for animation to stay running
                     cancelAnimationFrame(animationFrameID)
                     const nullfunc = () => {}
                     requestAnimationFrame(nullfunc)
@@ -337,8 +345,10 @@ const Game = () => {
             renderer.render(scene, camera)
         }
 
+        //initial call of animation loop
         animate()
 
+        //make canvas scale as window resizes
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight
             camera.updateProjectionMatrix()
@@ -364,12 +374,16 @@ const Game = () => {
         }
     }, [])
 
+    //start setup process if a sequence has been loaded
     useEffect(() => {
         if (sequence.length > 0) setup()
     }, [sequence])
 
+    //User interface JSX
     return profile && (
         <div className="Game">
+
+            {/* Telemetry display on the left side of the screen */}
             <div className="telemetry">
                 { sequence[phaseIndex]?.name 
                     ? <p className="phase">{sequence[phaseIndex].name}</p>
@@ -381,6 +395,7 @@ const Game = () => {
                 <p>Velocity: {Math.ceil(velocity)} m/s</p>
                 <p>Net Acceleration: {acceleration.toFixed(2)} m/s^2</p>
 
+                {/* Telemetry related to landing */}
                 <div className="landing-telemetry hidden">
                     <br />
                     <p id="throttle-label">Throttle: 0%</p>
@@ -402,10 +417,12 @@ const Game = () => {
 
             </div>
 
+            {/* Spacecraft info for right side of screen */}
             <div className="sc-info">
                 <p className="description">
                     {profile.isCustom ? profile.name : profile.description}
                 </p>
+                {/* details of next phase and when it will occur */}
                 {nextPhaseUI && (
                     <div className="upnext">
                         {autonomyLevel!=='none' && (
@@ -423,6 +440,7 @@ const Game = () => {
                 )}
             </div>
 
+            {/* Guidance and descriptions at the bottom of the screen */}
             {autonomyLevel !== 'none' && sequence[phaseIndex] && (
                 <div className="guidence">
                     <div className="progress-bar"></div>

@@ -3,6 +3,8 @@ import Link from 'next/link'
 
 import AppContext from '../context'
 
+/* Page for menu screen */
+
 const MenuScreen = () => {
 
   const [profiles, setProfiles] = useState([])
@@ -31,6 +33,7 @@ const MenuScreen = () => {
     if (spacecraftType !== "custom") {
       profile = profiles.filter(profile => profile.id === spacecraftType)[0]
     } else {
+      //if custom, create new profile based on an existing one
       let baseProfile 
         = profiles.filter(profile => profile.name === (customLandingMethod==='propulsion' ? 'NASA MSL' : 'NASA MER'))[0]
       profile = {...baseProfile}
@@ -45,6 +48,7 @@ const MenuScreen = () => {
     setSpacecraftType(e.target.value)
   }
 
+  // user interface JSX
   return (
     <div className="Menu">
 
@@ -54,6 +58,7 @@ const MenuScreen = () => {
         <div className="form">
           <form>
 
+            {/* spacecraft type selection */}
             <label htmlFor="sc-type">Spacecraft type</label>
             <select name="sc-type" id="sc-type" value={spacecraftType} onChange={e => spacecraftTypeChanged(e)}>
               {profiles.map(profile => {
@@ -65,6 +70,7 @@ const MenuScreen = () => {
               <option value="custom">Custom</option>
             </select>
 
+            {/* custom type properties */}
             {spacecraftType === 'custom' && (
               <fieldset id="custom-properties">
                 <legend>Custom spacecraft</legend>
@@ -83,6 +89,7 @@ const MenuScreen = () => {
               </fieldset>
             )}
 
+            {/* difficulty selection */}
             <label htmlFor="autonomy">Difficulty</label>
             <select name="autonomy" id="autonomy" value={autonomyLevel} onChange={e => setAutonomyLevel(e.target.value)}>
               <option value="full">Easy</option>
@@ -90,6 +97,7 @@ const MenuScreen = () => {
               <option value="none">Hard</option>
             </select>
 
+              {/* option to toggle anti-alising */}
             <div id="antialiasing">
               <input type="checkbox" name="antialias" id="antialias" checked={antialias} onChange={e => setAntialias(e.target.checked)}/>
               <label htmlFor="antialias"> Enable antialiasing (may affect performance)</label>
@@ -97,6 +105,7 @@ const MenuScreen = () => {
 
           </form>
 
+          {/* start button */}
           <Link href={'/game'} replace as={'/'}>
             <button className='start-btn'>
               Start
@@ -106,6 +115,7 @@ const MenuScreen = () => {
         </div>
       </div>
 
+      {/* Mars graphic for right side of screen */}
       <div className="graphic">
         <img src="assets/img/mars-shadow.png" alt="Mars" />
       </div>
