@@ -19,7 +19,7 @@ const Game = () => {
         selectedProfile: profile,
         autonomyLevel, setAutonomyLevel,
         antialias,
-        pausing, setPausing
+        pausing, setPausing,
     } = useContext(AppContext)
 
     const [sequence, setSequence] = useState([])
@@ -382,7 +382,9 @@ const Game = () => {
             </div>
 
             <div className="sc-info">
-                <p className="description">{profile.description}</p>
+                <p className="description">
+                    {profile.isCustom ? profile.name : profile.description}
+                </p>
                 {nextPhaseUI && (
                     <div className="upnext">
                         {autonomyLevel!=='none' && (

@@ -13,7 +13,6 @@ const MenuScreen = () => {
     selectedProfile, setSelectedProfile,
     autonomyLevel, setAutonomyLevel,
     antialias, setAntialias,
-    pausing, setPausing,
     customName, setCustomName,
     customMass, setCustomMass,
     customLandingMethod, setCustomLandingMethod,
@@ -28,9 +27,19 @@ const MenuScreen = () => {
 
   //set selectedprofile state
   useEffect(() => {
-    let profile = profiles.filter(profile => profile.id === spacecraftType)[0]
+    let profile
+    if (spacecraftType !== "custom") {
+      profile = profiles.filter(profile => profile.id === spacecraftType)[0]
+    } else {
+      let baseProfile 
+        = profiles.filter(profile => profile.name === (customLandingMethod==='propulsion' ? 'NASA MSL' : 'NASA MER'))[0]
+      profile = {...baseProfile}
+      profile.name = customName
+      profile.mass = customMass
+      profile.isCustom = true
+    }
     setSelectedProfile(profile)
-  }, [spacecraftType, profiles])
+  }, [spacecraftType, profiles, customLandingMethod, customMass, customName])
 
   const spacecraftTypeChanged = e => {
     setSpacecraftType(e.target.value)
