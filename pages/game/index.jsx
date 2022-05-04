@@ -56,10 +56,12 @@ const Game = () => {
         mars.add(atmosphere)
 
         //spacecraft
-        let loader = new GLTFLoader()
-        let spacecraft = await (await loader.loadAsync('/assets/models/aeroshell.gltf')).scene.children[0]
+        let spacecraft = new THREE.Group()
         mainScene.add(spacecraft)
-        spacecraft.material = new THREE.MeshPhongMaterial({
+        let loader = new GLTFLoader()
+        let aeroshell = await (await loader.loadAsync('/assets/models/aeroshell.gltf')).scene.children[0]
+        spacecraft.add(aeroshell)
+        aeroshell.material = new THREE.MeshPhongMaterial({
             color: 0xffffff
         })
         //heatshield
@@ -68,7 +70,30 @@ const Game = () => {
         heatshield.material = new THREE.MeshPhongMaterial({
             color: 0x888888
         })
-        heatshield.position.y = -0.1
+        //parachute
+        let parachute = await (await loader.loadAsync('/assets/models/parachute.gltf')).scene.children[0]
+        spacecraft.add(parachute)
+        parachute.material = new THREE.MeshPhongMaterial({
+            color: 0xffffff
+        })
+        //airbag
+        let airbag = await (await loader.loadAsync('/assets/models/airbag.gltf')).scene.children[0]
+        spacecraft.add(airbag)
+        airbag.material = new THREE.MeshPhongMaterial({
+            color: 0xffffff
+        })
+        //spacecarft itself
+        if (profile.model) {
+            let model = await (await loader.loadAsync(`/assets/models/${profile.model}.glb`)).scene.children[0]
+            spacecraft.add(model)
+            model.material = new THREE.MeshPhongMaterial({
+                color: 0xffffff
+            })
+            model.scale.set(0.35, 0.35, 0.35)
+            model.position.x = 0.5
+            model.position.z = 0.5
+            model.position.y = -0.4
+        }
 
         //directional light for spacecraft
         let light = new THREE.DirectionalLight(0xffffff)
@@ -78,22 +103,6 @@ const Game = () => {
         // ambient light
         const ambientlight = new THREE.AmbientLight(0xffffff, 0.1)
         mainScene.add(ambientlight)
-
-        //stars
-        const starGeometry = new THREE.BufferGeometry()
-        const starPositions = []
-        for (let i = 0; i < 10000; i++) {
-            const x = (Math.random() - 0.5) * 5000
-            const y = (Math.random() - 0.5) * 5000
-            const z = Math.random() * 5000
-            starPositions.push(x, y, z)
-        }
-        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3))
-        const starMaterial = new THREE.PointsMaterial({
-            color: 0xffffff,
-        })
-        const stars = new THREE.Points(starGeometry, starMaterial)
-        // scene.add(stars)
 
         spacecraft.add(exhaust)
         exhaust.scale.set(0, 0, 0)
@@ -161,6 +170,18 @@ const Game = () => {
                 document.querySelector('.sc-info').classList.add('paused')
             }
 
+            //parachute
+            parachute.visible = 
+                sequence[phaseIndex].key === 'descent-parachute' || sequence[phaseIndex].key === 'backshell-separation'
+
+            //airbag
+            airbag.visible = 
+                sequence[phaseIndex].key === 'final-decent'
+
+            //spacecraft color
+            aeroshell.material.color = new THREE.Color(sequence[phaseIndex].key === 'entry' ? 0xffaaaa : 0xffffff)
+            heatshield.material.color = new THREE.Color(sequence[phaseIndex].key === 'entry' ? 0x751f00 : 0xaaaaaa)
+
             //altitude
             let alt = spacecraft.position.z - (mars.position.z + MARS_RADIUS)
 
@@ -174,31 +195,21 @@ const Game = () => {
                     dragNewtons = 0.5 * density * Math.pow(vel, 2) * profile.crossSectionArea
                     dragAcc = dragNewtons / mass
                     acc = GRAVITY - dragAcc
-                    spacecraft.material.color = new THREE.Color(0xffaaaa)
-                    heatshield.material.color = new THREE.Color(0x751f00)
                     break
                 case 'descent-pre-parachute':
                     density = 0.02 * Math.exp(-alt/11100)
                     dragNewtons = 0.5 * density * Math.pow(vel, 2) * profile.crossSectionArea
                     dragAcc = dragNewtons / (mass * 2)
                     acc = GRAVITY - dragAcc
-                    spacecraft.material.color = new THREE.Color(0xffffff)
-                    heatshield.material.color = new THREE.Color(0xaaaaaa)
                     break
                 case 'descent-parachute':
                     acc = profile.parachuteDeceleration
-                    spacecraft.material.color = new THREE.Color(0xffffff)
-                    heatshield.material.color = new THREE.Color(0xaaaaaa)
                     break
                 case 'landing':
                     acc = GRAVITY - (throttle * 1.5 * GRAVITY)
-                    spacecraft.material.color = new THREE.Color(0xffffff)
-                    heatshield.material.color = new THREE.Color(0xaaaaaa)
                     break
                 default:
                     acc = GRAVITY
-                    spacecraft.material.color = new THREE.Color(0xffffff)
-                    heatshield.material.color = new THREE.Color(0xaaaaaa)
             }
 
             //next phase stuff
