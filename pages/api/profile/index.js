@@ -2,6 +2,8 @@
 import fs from 'fs'
 import path from 'path'
 
+/* returns all profiles listes as JSON files in the
+assets.profiles directory. */
 
 export default function handler(req, res) {
     const dirRelativeToPublicFolder = 'assets/profiles'
