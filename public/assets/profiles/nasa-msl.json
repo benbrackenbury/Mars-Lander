@@ -21,8 +21,8 @@
         "key": "descent-pre-parachute",
         "name": "Descent (free fall)",
         "description": {
-          "full": "The spacecraft will soon need to deploy its parachute, but it is currently too high.",
-          "guided": "The spacecraft will soon need to deploy its parachute, but it is currently too high."
+          "full": "The spacecraft will soon need to deploy its parachute, but the atmosphere is too thin at this altitude.",
+          "guided": "The spacecraft will soon need to deploy its parachute, but the atmosphere is too thin at this altitude."
         },
         "trigger": {
           "full": {
@@ -37,7 +37,7 @@
         "name": "Parachute Deploy",
         "description": {
           "full": "The atmosphere is now thin enough to deploy the parachute.",
-          "guided": "The atmosphere is now thin enough to deploy the parachute. Press SPACE to deploy."
+          "guided": "The atmosphere is now thin enough to deploy the parachute. Press SPACE to deploy the parachute and jettison the heat shield."
         },
         "trigger": {
           "full": {
