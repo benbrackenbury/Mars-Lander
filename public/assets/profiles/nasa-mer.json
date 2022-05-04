@@ -19,8 +19,8 @@
         "key": "descent-pre-parachute",
         "name": "Descent (free fall)",
         "description": {
-          "full": "TThe spacecraft will soon need to deploy its parachute, but the atmosphere is too thin at this altitude.",
-          "guided": "TThe spacecraft will soon need to deploy its parachute, but the atmosphere is too thin at this altitude."
+          "full": "The spacecraft will soon need to deploy its parachute, but the atmosphere is too thin at this altitude.",
+          "guided": "The spacecraft will soon need to deploy its parachute, but the atmosphere is too thin at this altitude."
         },
         "trigger": {
           "full": {
