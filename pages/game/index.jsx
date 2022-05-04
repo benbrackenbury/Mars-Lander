@@ -57,11 +57,18 @@ const Game = () => {
 
         //spacecraft
         let loader = new GLTFLoader()
-        let spacecraft = await (await loader.loadAsync('/assets/models/msl-aeroshell.gltf')).scene.children[0]
+        let spacecraft = await (await loader.loadAsync('/assets/models/aeroshell.gltf')).scene.children[0]
         mainScene.add(spacecraft)
         spacecraft.material = new THREE.MeshPhongMaterial({
             color: 0xffffff
         })
+        //heatshield
+        let heatshield = await (await loader.loadAsync('/assets/models/heatshield.gltf')).scene.children[0]
+        spacecraft.add(heatshield)
+        heatshield.material = new THREE.MeshPhongMaterial({
+            color: 0x888888
+        })
+        heatshield.position.y = -0.1
 
         //directional light for spacecraft
         let light = new THREE.DirectionalLight(0xffffff)
@@ -169,6 +176,7 @@ const Game = () => {
                     dragAcc = dragNewtons / mass
                     acc = GRAVITY - dragAcc
                     spacecraft.material.color = new THREE.Color(0xffaaaa)
+                    heatshield.material.color = new THREE.Color(0x751f00)
                     break
                 case 'descent-pre-parachute':
                     density = 0.02 * Math.exp(-alt/11100)
@@ -176,18 +184,22 @@ const Game = () => {
                     dragAcc = dragNewtons / (mass * 2)
                     acc = GRAVITY - dragAcc
                     spacecraft.material.color = new THREE.Color(0xffffff)
+                    heatshield.material.color = new THREE.Color(0xaaaaaa)
                     break
                 case 'descent-parachute':
                     acc = profile.parachuteDeceleration
                     spacecraft.material.color = new THREE.Color(0xffffff)
+                    heatshield.material.color = new THREE.Color(0xaaaaaa)
                     break
                 case 'landing':
                     acc = GRAVITY - (throttle * 1.5 * GRAVITY)
                     spacecraft.material.color = new THREE.Color(0xffffff)
+                    heatshield.material.color = new THREE.Color(0xaaaaaa)
                     break
                 default:
                     acc = GRAVITY
                     spacecraft.material.color = new THREE.Color(0xffffff)
+                    heatshield.material.color = new THREE.Color(0xaaaaaa)
             }
 
             //next phase stuff
