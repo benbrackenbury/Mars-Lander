@@ -56,6 +56,31 @@
             #antialiasing {
                 margin-top: 2rem;
             }
+
+            #custom-properties {
+                padding: 0.7em 1.2em;
+                margin-top: 1rem;
+                border-radius: 1rem;
+
+                input {
+                    margin-bottom: 1em;
+                    font-size: 1.6rem;
+                    padding: 0.2em 0.4em;
+                    border: none;
+                    border-radius: 0.8rem;
+                    outline: none;
+                }
+
+                input {
+                    margin-left: 1em;
+                }
+
+                #landingmethod {
+                    margin-top: 0.5em;
+                    margin-bottom: 0.5rem;
+                    width: 10ch;
+                }
+            }
         }
 
         .start-btn {

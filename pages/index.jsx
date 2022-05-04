@@ -14,6 +14,9 @@ const MenuScreen = () => {
     autonomyLevel, setAutonomyLevel,
     antialias, setAntialias,
     pausing, setPausing,
+    customName, setCustomName,
+    customMass, setCustomMass,
+    customLandingMethod, setCustomLandingMethod,
   } = useContext(AppContext)
 
   //fetch all profiles
@@ -29,6 +32,10 @@ const MenuScreen = () => {
     setSelectedProfile(profile)
   }, [spacecraftType, profiles])
 
+  const spacecraftTypeChanged = e => {
+    setSpacecraftType(e.target.value)
+  }
+
   return (
     <div className="Menu">
 
@@ -39,13 +46,33 @@ const MenuScreen = () => {
           <form>
 
             <label htmlFor="sc-type">Spacecraft type</label>
-            <select name="sc-type" id="sc-type" value={spacecraftType} onChange={e => setSpacecraftType(e.target.value)}>
+            <select name="sc-type" id="sc-type" value={spacecraftType} onChange={e => spacecraftTypeChanged(e)}>
               {profiles.map(profile => {
                 return <option key={profile.id} value={profile.id}>
                   {profile.name} ({profile.mass}kg)
                 </option>
               })}
+              <option value="" disabled>----------------</option> {/* separator */}
+              <option value="custom">Custom</option>
             </select>
+
+            {spacecraftType === 'custom' && (
+              <fieldset id="custom-properties">
+                <legend>Custom spacecraft</legend>
+                <label htmlFor="name">Name</label>
+                <input type="text" name="name" id="name" placeholder="Name" value={customName} onChange={e => setCustomName(e.target.value)} />
+                <br />
+                <label htmlFor="mass">Mass</label>
+                <input type="number" name="mass" id="mass" placeholder="kg" value={customMass} onChange={e => setCustomMass(e.target.value)} />
+                <br />
+                <label htmlFor="landingmethod">Landing method</label>
+                <br />
+                <select name="landingmethod" id="landingmethod" value={customLandingMethod} onChange={e => setCustomLandingMethod(e.target.value)}>
+                  <option value="propulsion">Propulsion</option>
+                  <option value="airbag">Airbag</option>
+                </select>
+              </fieldset>
+            )}
 
             <label htmlFor="autonomy">Difficulty</label>
             <select name="autonomy" id="autonomy" value={autonomyLevel} onChange={e => setAutonomyLevel(e.target.value)}>
@@ -58,13 +85,6 @@ const MenuScreen = () => {
               <input type="checkbox" name="antialias" id="antialias" checked={antialias} onChange={e => setAntialias(e.target.checked)}/>
               <label htmlFor="antialias"> Enable antialiasing (may affect performance)</label>
             </div>
-
-            {/* {autonomyLevel==='guided' && (
-              <div id="pausing">
-                <input type="checkbox" name="pausing" id="pausing" checked={pausing} onChange={e => setPausing(e.target.checked)}/>
-                <label htmlFor="pausing"> Pause for player input</label>
-              </div>
-            )} */}
 
           </form>
 
