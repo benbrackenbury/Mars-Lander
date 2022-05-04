@@ -126,7 +126,6 @@ const Game = () => {
 
         let scene = mainScene
         
-        let animationFrameID
         const animate = () => {
             let deltaTime = clock.getDelta()
             if (!isPaused) {
