@@ -8,6 +8,7 @@ import AppContext from '../../context'
 import mars, { MARS_RADIUS, GRAVITY } from '../../three/objects/mars'
 import exhaust from '../../three/objects/exhaust'
 import { initialVelocity } from '../../three/objects/spacecraft'
+import GameManager from '../../three/GameManager'
 
 const toRadians = degrees => degrees * (Math.PI / 180)
 
@@ -32,32 +33,16 @@ const Game = () => {
     let phaseIndex = 0
 
     const setup = async () => {
-        const mainScene = new THREE.Scene()
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000000000)
+        const { scene, camera } = GameManager.shared
 
         const renderer = new THREE.WebGLRenderer({ antialias })
         renderer.setSize(window.innerWidth, window.innerHeight)
         document.querySelectorAll('canvas').forEach(canvas => canvas.remove())
         document.querySelector('.Game').appendChild(renderer.domElement)
 
-        mainScene.add(mars)
-        const STARTING_ALTITUDE = 131000
-        mars.position.set(0, 0, -(MARS_RADIUS + STARTING_ALTITUDE))
-        camera.position.set(0, 0, 20)
-
-        //atmosphere
-        const atmosphereGeometry = new THREE.SphereGeometry(3389500+150000, 100, 100)
-        const atmosphereMaterial = new THREE.MeshBasicMaterial({
-            color: 0xac5440,
-            opacity: 0.1,
-            transparent: true
-        })
-        const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial)
-        mars.add(atmosphere)
-
         //spacecraft
         let spacecraft = new THREE.Group()
-        mainScene.add(spacecraft)
+        scene.add(spacecraft)
         let loader = new GLTFLoader()
         let aeroshell = await (await loader.loadAsync('/assets/models/aeroshell.gltf')).scene.children[0]
         spacecraft.add(aeroshell)
@@ -98,14 +83,11 @@ const Game = () => {
         //directional light for spacecraft
         let light = new THREE.DirectionalLight(0xffffff)
         light.position.set(1, 1, 10).normalize()
-        mainScene.add(light)
+        scene.add(light)
 
         // ambient light
         const ambientlight = new THREE.AmbientLight(0xffffff, 0.1)
-        mainScene.add(ambientlight)
-
-        spacecraft.add(exhaust)
-        exhaust.scale.set(0, 0, 0)
+        scene.add(ambientlight)
         
         //orbit controls
         const controls = new OrbitControls(camera, renderer.domElement)
@@ -133,8 +115,6 @@ const Game = () => {
         document.addEventListener('keyup', e => {
             keysDown[e.key] = false
         })
-
-        let scene = mainScene
         
         const animate = () => {
             let deltaTime = clock.getDelta()
