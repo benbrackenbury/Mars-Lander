@@ -321,6 +321,7 @@ const Game = () => {
                 let success = true
                 if (velocityProxy > 10) {
                     success = false
+                    //set text at bottom to reflect end state
                     if (autonomyLevel !== 'none') {
                         document.querySelector('.guidence > .text').innerHTML 
                             = `Unfortunatley the spacecraft has crashed at a velocity of ${Math.floor(velocityProxy)} m/s.`
@@ -328,8 +329,7 @@ const Game = () => {
                 }
                 isPaused = true
                 setTimeout(() => {
-                    console.log('END')
-                    // router.replace(`/game/end?success=${success}&velocity=${Math.floor(vel)}`)
+                    //navigate to end screen
                     window.location = `/game/end?success=${success}&velocity=${Math.floor(velocityProxy)}`
                     //make sure there is no way for animation to stay running
                     cancelAnimationFrame(animationFrameID)
