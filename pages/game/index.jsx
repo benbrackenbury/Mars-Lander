@@ -124,6 +124,7 @@ const Game = () => {
         let lastRecordedElapsedTime = 0
         let parachuteDeployIndex
         let animationFrameID
+        let hasMovedToEndScreen = false
 
         spacecraft.scale.set(2, 2, 2)
 
@@ -308,7 +309,8 @@ const Game = () => {
                 document.querySelector('.progress-bar').style.transform = `scaleX(${progress})`
             }
 
-            if (alt <= 0) {
+            if (alt <= 0 ) {
+                hasMovedToEndScreen = true
                 let success = true
                 if (vel > 10) {
                     success = false
@@ -319,8 +321,14 @@ const Game = () => {
                 }
                 isPaused = true
                 setTimeout(() => {
-                    router.replace(`/game/end?success=${success}&velocity=${Math.floor(vel)}`)
+                    console.log('END')
+                    // router.replace(`/game/end?success=${success}&velocity=${Math.floor(vel)}`)
+                    window.location = `/game/end?success=${success}&velocity=${Math.floor(vel)}`
                     cancelAnimationFrame(animationFrameID)
+                    const nullfunc = () => {}
+                    requestAnimationFrame(nullfunc)
+                    document.querySelectorAll('canvas').forEach(canvas => canvas.remove())
+                    renderer = null
                 }, 3000)
             }
             

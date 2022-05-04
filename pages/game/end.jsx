@@ -1,22 +1,24 @@
-import { useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
 const EndScreen = () => {
-    const router = useRouter()
+
+    const [success, setSuccess] = useState('false')
+    const [velocity, setVelocity] = useState(0)
+
 
     useEffect(() => {
-        if (!router.query.success || !router.query.vel) {
-            router.push('/')
-        }
+        const urlParams = new URLSearchParams(window.location.search)
+        setSuccess(urlParams.get('success'))
+        setVelocity(urlParams.get('velocity'))
     }, [])
 
     return (
         <div className="End">
             <div className="content">
                 <h1>
-                    The spacecraft {router.query.success==='true' ? 'successfuly touched down ' : 'unfortantely crashed '} 
-                    on the surface of Mars at {router.query.velocity} m/s, {router.query.success==='true' ? 'congratulations!' : 'and suffered a rapid unscheduled dissasembly.'} 
+                    The spacecraft {success==='true' ? 'successfuly touched down ' : 'unfortantely crashed '} 
+                    on the surface of Mars at {velocity} m/s, {success==='true' ? 'congratulations!' : 'and suffered a rapid unscheduled dissasembly.'} 
                 </h1>
 
                 <Link href={'/'}>
