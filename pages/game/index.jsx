@@ -285,7 +285,7 @@ const Game = () => {
             }
             
             //animation loop
-            animationFrameID = requestAnimationFrame(animate)
+            requestAnimationFrame(animate)
             renderer.render(scene, camera)
         }
 
