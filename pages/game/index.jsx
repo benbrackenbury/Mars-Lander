@@ -198,7 +198,7 @@ const Game = () => {
             aeroshell.material.color = new THREE.Color(sequence[phaseIndex].key === 'entry' ? 0xffaaaa : 0xffffff)
             heatshield.material.color = new THREE.Color(sequence[phaseIndex].key === 'entry' ? 0x751f00 : 0xaaaaaa)
 
-            //altitude
+            //calculate altitude
             let alt = spacecraft.position.z - (mars.position.z + MARS_RADIUS)
 
             //drag & acceleration
@@ -307,8 +307,19 @@ const Game = () => {
                 document.querySelector('.progress-bar').style.transform = `scaleX(${progress})`
             }
 
-            if (alt < 1) {
+            if (alt <= 0) {
+                let success = true
+                if (vel > 10) {
+                    success = false
+                    if (autonomyLevel !== 'none') {
+                        document.querySelector('.guidence > .text').innerHTML 
+                            = `Unfortunatley the spacecraft has crashed at a velocity of ${Math.floor(vel)} m/s.`
+                    }
+                }
                 isPaused = true
+                setTimeout(() => {
+                    router.replace(`/game/end?success=${success}&velocity=${Math.floor(vel)}`)
+                }, 3000)
             }
             
             //animation loop
