@@ -4,16 +4,16 @@ Project structure
     - mostly config files for next.js
     - context.js sets up the global context/state for the app
 
-pages
+/pages
     - files not prefixed with an underscore are pages
     - files prefixed with an underscore are template/layout files
-    - the api folder contains the api file used for fetching spacecraft profiles
+    - the /api folder contains the api file used for fetching spacecraft profiles
 
-public
+/public
     - static files such as images, spacraft profiles, 3D model files
 
-style
+/style
     - SCSS files
 
-three
+/three
     - files related to three js objects
