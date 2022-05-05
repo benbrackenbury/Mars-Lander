@@ -24,8 +24,8 @@ const Game = () => {
     const [sequence, setSequence] = useState([])
     const [timeElapsed, setTimeElapsed] = useState(0)
     const [altitude, setAltitude] = useState(0)
-    const [acceleration, setAcceleration] = useState(0)
     const [velocity, setVelocity] = useState(0)
+    const [acceleration, setAcceleration] = useState(0)
     const [nextPhaseUI, setNextPhaseUI] = useState(null)
 
     let phaseIndex = 0
@@ -83,7 +83,7 @@ const Game = () => {
         airbag.material = new THREE.MeshPhongMaterial({
             color: 0xffffff
         })
-        //spacecarft itself
+        //spacecraft itself
         if (profile.model) {
             let model = await (await loader.loadAsync(`/assets/models/${profile.model}.glb`)).scene.children[0]
             spacecraft.add(model)

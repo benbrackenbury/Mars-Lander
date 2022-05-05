@@ -83,8 +83,8 @@
         "key": "final-descent",
         "name": "Final Descent",
         "description": {
-          "full": "The spacecarft is about to touch down on the surface of Mars.",
-          "guided": "The spacecarft is about to touch down on the surface of Mars."
+          "full": "The spacecraft is about to touch down on the surface of Mars.",
+          "guided": "The spacecraft is about to touch down on the surface of Mars."
         },
         "trigger": {
           "full": {
