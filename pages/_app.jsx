@@ -6,7 +6,7 @@ import AppContext from '../context'
 /* acts as a wrapper for all other pages;
  contains global states and passes to children */
 
-export default ({ Component, pageProps }) => {
+const App = ({ Component, pageProps }) => {
 
   //global states
   const [selectedProfile, setSelectedProfile] = useState(null)
@@ -37,3 +37,5 @@ export default ({ Component, pageProps }) => {
     </AppContext.Provider>
  )
 }
+
+export default App
