@@ -185,7 +185,7 @@ const Game = () => {
                 parachuteDeployIndex = phaseIndex
             }
             //if parachute has been deployed
-            if (phaseIndex === parachuteDeployIndex + 1) {
+            if (phaseIndex >= parachuteDeployIndex + 1) {
                 heatshield.visible = false
             }
 
@@ -200,7 +200,7 @@ const Game = () => {
             //aeroshell visibility
             aeroshell.visible = 
                 sequence[phaseIndex].key !== 'landing' ||
-                (sequence[phaseIndex].key !== 'touchdown' && profile.name==="Nasa MSL")
+                (sequence[phaseIndex].key !== 'touchdown' && profile.name==="NASA MSL")
 
             //spacecraft color
             aeroshell.material.color = new THREE.Color(sequence[phaseIndex].key === 'entry' ? 0xffaaaa : 0xffffff)
@@ -230,7 +230,11 @@ const Game = () => {
                     accelerationProxy = profile.parachuteDeceleration
                     break
                 case 'landing':
-                    accelerationProxy = GRAVITY - (throttle * 1.5 * GRAVITY)
+                    if (throttle === 0.5) {
+                        accelerationProxy = 0
+                    } else {
+                        accelerationProxy = GRAVITY - (throttle * 1.5 * GRAVITY)
+                    }
                     break
                 default:
                     accelerationProxy = GRAVITY
@@ -317,7 +321,6 @@ const Game = () => {
 
             //handle landing or crash
             if (altitudeProxy <= 0 ) {
-                hasMovedToEndScreen = true
                 let success = true
                 if (velocityProxy > 10) {
                     success = false

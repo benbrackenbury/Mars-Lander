@@ -43,7 +43,6 @@
             align-items: center;
             margin-bottom: 1.5rem;
             margin-top: 0.5rem;
-            transform: rotate(180deg);
 
             .throttle-bar,
             .fuel-bar {
@@ -64,6 +63,7 @@
             align-items: flex-end;
             margin-bottom: 1.5rem;
             margin-top: 0.5rem;
+            transform: rotate(180deg);
 
             .altitude-bar{
                 max-height: 100%;
