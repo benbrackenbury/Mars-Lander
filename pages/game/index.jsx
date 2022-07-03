@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useLayoutEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import AppContext from '../../context'
-import mars, { MARS_RADIUS, GRAVITY } from '../../three/objects/mars'
+import mars, { MARS_RADIUS, GRAVITY, marsLandingMaterial } from '../../three/objects/mars'
 import exhaust from '../../three/objects/exhaust'
 
 const toRadians = degrees => degrees * (Math.PI / 180)
@@ -29,6 +29,10 @@ const Game = () => {
     const [nextPhaseUI, setNextPhaseUI] = useState(null)
 
     let phaseIndex = 0
+
+    const returnToMenu = () => {
+        window.location = `/`
+    }
 
     const setup = async () => {
         //set up camera and scene
@@ -96,6 +100,7 @@ const Game = () => {
             model.position.y = -0.4
         }
         //exhaust
+        exhaust.name = 'exhaust'
         spacecraft.add(exhaust)
         exhaust.scale.set(0, 0, 0)
         //scale
@@ -189,6 +194,16 @@ const Game = () => {
                 heatshield.visible = false
             }
 
+            //set background depending on phase
+            if (sequence[phaseIndex].key === 'entry') {
+                scene.background = new THREE.Color(0x000000)
+            } else if (sequence[phaseIndex].key === 'descent-pre-parachute') {
+                scene.background = new THREE.Color(0x290e08)
+            } else {
+                scene.background = new THREE.Color(0x381d18)
+            }
+
+
             //parachute visibility
             parachute.visible = 
                 sequence[phaseIndex].key === 'descent-parachute' || sequence[phaseIndex].key === 'backshell-separation'
@@ -200,7 +215,18 @@ const Game = () => {
             //aeroshell visibility
             aeroshell.visible = 
                 sequence[phaseIndex].key !== 'landing' ||
-                (sequence[phaseIndex].key !== 'touchdown' && profile.name==="NASA MSL")
+                (sequence[phaseIndex].key !== 'touchdown' && profile.name==="NASA Mars Science Laboratory")
+
+            if (sequence[phaseIndex].key === 'landing' || (sequence[phaseIndex].key === 'touchdown') && profile.name==="NASA Mars Science Laboratory") {
+                //hide every spacecraft object except for model and exhaust
+                spacecraft.children.forEach(child => {
+                    if (child.name === 'MSL' || child.name === 'exhaust') {
+                        child.visible = true
+                    } else {
+                        child.visible = false
+                    }
+                })
+            }
 
             //spacecraft color
             aeroshell.material.color = new THREE.Color(sequence[phaseIndex].key === 'entry' ? 0xffaaaa : 0xffffff)
@@ -273,6 +299,9 @@ const Game = () => {
 
             //landing: handle throttle and exahust graphics
             if (sequence[phaseIndex].key === 'landing') {
+                //set texture to be easier to see
+                mars.material = marsLandingMaterial
+
                 //show telemetry and handle throttle
                 document.querySelector('.landing-telemetry').classList.remove('hidden')
                 if (fuelRemaining > 0) {
@@ -294,10 +323,11 @@ const Game = () => {
                     throttle = 0
                 }
 
-                fuelRemaining -= throttle * deltaTime * (throttle > 0.5 ? 1.5 : 1)
+                fuelRemaining -= throttle * deltaTime * (throttle > 0.5 ? 1.5 : 1.1)
                 mass = 900 - 100 + fuelRemaining
 
                 exhaust.scale.set(1, -throttle, 1)
+                exhaust.position.set(0,-1,0)
                 document.querySelector('#throttle-label').innerHTML = `Throttle: ${Math.floor(throttle * 100)}%`
                 document.querySelector('#fuel-label').innerHTML = `Fuel Remaining: ${Math.floor(fuelRemaining)}%`
 
@@ -379,15 +409,32 @@ const Game = () => {
 
     //start setup process if a sequence has been loaded
     useEffect(() => {
-        if (sequence.length > 0) setup()
+        if (sequence.length > 0 && typeof window === 'object') setup()
     }, [sequence])
+
+    //back button events
+    useLayoutEffect(() => {
+        //on mouse hover
+        document.querySelector('.back-btn').addEventListener('mouseenter', () => {
+            document.querySelector('.telemetry').style.opacity = '0.5'
+            document.querySelector('.sc-info').style.opacity = '0.5'
+        })
+        //on mouse leave
+        document.querySelector('.back-btn').addEventListener('mouseout', () => {
+            document.querySelector('.telemetry').style.opacity = '1'
+            document.querySelector('.sc-info').style.opacity = '1'
+        })
+    })
 
     //User interface JSX
     return profile && (
         <div className="Game">
+            <p className="back-btn" onClick={returnToMenu}>Return to Menu</p>
 
             {/* Telemetry display on the left side of the screen */}
             <div className="telemetry">
+
+
                 { sequence[phaseIndex]?.name 
                     ? <p className="phase">{sequence[phaseIndex].name}</p>
                     : <p>Loading...</p>

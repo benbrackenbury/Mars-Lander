@@ -51,8 +51,8 @@
         "key": "descent-parachute",
         "name": "Descent under parachute",
         "description": {
-          "full": "The spacecraft is being slowed down by the parachute.",
-          "guided": "The spacecraft is being slowed down by the parachute."
+          "full": "The spacecraft is being slowed down by drag, caused by the large surface area of the parachute.",
+          "guided": "The spacecraft is being slowed down by drag, caused by the large surface area of the parachute."
         },
         "trigger": {
           "full": {
@@ -70,8 +70,8 @@
         "key": "backshell-separation",
         "name": "Backshell Separation",
         "description": {
-          "full": "The spaceacraft now is still travelling too fast to softly touch down, so will separate from the backshell and parachute.",
-          "guided": "The spaceacraft now is still travelling too fast to softly touch down. Press X to separate the spacecraft from the backshell and parachute."
+          "full": "The spaceacraft now is still travelling too fast to softly touch down, so will separate from the backshell and parachute. (Hint: press E immidiately after to maintain the current velocity.)",
+          "guided": "The spaceacraft now is still travelling too fast to softly touch down. Press X to separate the spacecraft from the backshell and parachute. (Hint: press E immidiately after to maintain the current velocity.)"
         },
         "trigger": {
           "full": {

@@ -1,4 +1,5 @@
 import react, { useState, useEffect } from 'react'
+import Head from 'next/head'
 
 import '../style/index.scss'
 import AppContext from '../context'
@@ -32,7 +33,11 @@ const App = ({ Component, pageProps }) => {
 
   //wrapper for all pages
   return (
+    
     <AppContext.Provider value={{ ...allProps }}>
+      <Head>
+        <title>Mars Lander</title>
+      </Head>
       <Component {...pageProps} />
     </AppContext.Provider>
  )

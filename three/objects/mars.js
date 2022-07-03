@@ -9,7 +9,16 @@ const marsMaterial = new THREE.MeshBasicMaterial({
     bumpMap: new THREE.TextureLoader().load('/assets/img/mars-bump.jpg'),
     bumpScale: 1,
 })
+
+const marsLandingMaterial = new THREE.MeshBasicMaterial({
+    map: new THREE.TextureLoader().load('/assets/img/mars-texture.jpg', texture => {
+        texture.wrapS = THREE.RepeatWrapping
+        texture.wrapT = THREE.RepeatWrapping
+        texture.repeat.set(1000, 1000)
+    })
+})
+
 const mars = new THREE.Mesh(marsGeometry, marsMaterial)
 
 export default mars
-export { MARS_RADIUS, GRAVITY }
+export { MARS_RADIUS, GRAVITY, marsLandingMaterial }

@@ -49,8 +49,8 @@
         "key": "descent-parachute",
         "name": "Descent under parachute",
         "description": {
-          "full": "The spacecraft is being slowed down by the parachute.",
-          "guided": "The spacecraft is being slowed down by the parachute."
+          "full": "The spacecraft is being slowed down by drag, caused by the large surface area of the parachute.",
+          "guided": "The spacecraft is being slowed down by drag, caused by the large surface area of the parachute."
         },
         "trigger": {
           "full": {
