@@ -10,6 +10,6 @@ To install required Node modules, run
 
 To run the application, run
 
-> npm dev
+> npm run dev
 
 See package.json for more details.
